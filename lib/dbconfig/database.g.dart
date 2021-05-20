@@ -62,6 +62,8 @@ class _$AppDatabase extends AppDatabase {
 
   PersonDao? _personDaoInstance;
 
+  AccountDao? _accountDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -82,6 +84,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER NOT NULL, `site_name` TEXT NOT NULL, `site_pin_yin_name` TEXT NOT NULL, `user_name` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `create_time` TEXT NOT NULL, `update_time` TEXT NOT NULL, `memo` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -92,6 +96,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   PersonDao get personDao {
     return _personDaoInstance ??= _$PersonDao(database, changeListener);
+  }
+
+  @override
+  AccountDao get accountDao {
+    return _accountDaoInstance ??= _$AccountDao(database, changeListener);
   }
 }
 
@@ -133,5 +142,34 @@ class _$PersonDao extends PersonDao {
   @override
   Future<void> insertPerson(Person person) async {
     await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
+  }
+}
+
+class _$AccountDao extends AccountDao {
+  _$AccountDao(this.database, this.changeListener)
+      : _accountInsertionAdapter = InsertionAdapter(
+            database,
+            'Account',
+            (Account item) => <String, Object?>{
+                  'id': item.id,
+                  'site_name': item.site_name,
+                  'site_pin_yin_name': item.site_pin_yin_name,
+                  'user_name': item.user_name,
+                  'password': item.password,
+                  'remarks': item.remarks,
+                  'create_time': item.create_time,
+                  'update_time': item.update_time,
+                  'memo': item.memo
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final InsertionAdapter<Account> _accountInsertionAdapter;
+
+  @override
+  Future<void> add(Account account) async {
+    await _accountInsertionAdapter.insert(account, OnConflictStrategy.abort);
   }
 }

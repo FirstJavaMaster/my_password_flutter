@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:my_password_flutter/widget/account_list_widget.dart';
 
 void main() => runApp(new MyApp());
 
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Startup Name Generator',
-      home: new RandomWords(),
+      home: new AccountListWidget(),
     );
   }
 }

@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   english_words: ^4.0.0
   floor: ^1.1.0
+  fluttertoast: ^8.0.7
 
 
   # The following adds the Cupertino Icons font to your application.
