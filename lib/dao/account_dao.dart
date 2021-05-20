@@ -4,7 +4,7 @@ import 'package:my_password_flutter/entity/account.dart';
 @dao
 abstract class AccountDao {
   @insert
-  Future<void> add(Account account);
+  Future<int> add(Account account);
 
   @Query('SELECT * FROM Account')
   Future<List<Account>> findAll();

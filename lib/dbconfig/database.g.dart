@@ -60,8 +60,6 @@ class _$AppDatabase extends AppDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  PersonDao? _personDaoInstance;
-
   AccountDao? _accountDaoInstance;
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
@@ -83,9 +81,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER NOT NULL, `site_name` TEXT NOT NULL, `site_pin_yin_name` TEXT NOT NULL, `user_name` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `create_time` TEXT NOT NULL, `update_time` TEXT NOT NULL, `memo` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `site_name` TEXT NOT NULL, `site_pin_yin_name` TEXT NOT NULL, `user_name` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `create_time` TEXT NOT NULL, `update_time` TEXT NOT NULL, `memo` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -94,54 +90,8 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
-  PersonDao get personDao {
-    return _personDaoInstance ??= _$PersonDao(database, changeListener);
-  }
-
-  @override
   AccountDao get accountDao {
     return _accountDaoInstance ??= _$AccountDao(database, changeListener);
-  }
-}
-
-class _$PersonDao extends PersonDao {
-  _$PersonDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database, changeListener),
-        _personInsertionAdapter = InsertionAdapter(
-            database,
-            'Person',
-            (Person item) =>
-                <String, Object?>{'id': item.id, 'name': item.name},
-            changeListener);
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<Person> _personInsertionAdapter;
-
-  @override
-  Future<List<Person>> findAllPersons() async {
-    return _queryAdapter.queryList('SELECT * FROM Person',
-        mapper: (Map<String, Object?> row) =>
-            Person(row['id'] as int, row['name'] as String));
-  }
-
-  @override
-  Stream<Person?> findPersonById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM Person WHERE id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            Person(row['id'] as int, row['name'] as String),
-        arguments: [id],
-        queryableName: 'Person',
-        isView: false);
-  }
-
-  @override
-  Future<void> insertPerson(Person person) async {
-    await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
   }
 }
 
@@ -175,7 +125,7 @@ class _$AccountDao extends AccountDao {
   Future<List<Account>> findAll() async {
     return _queryAdapter.queryList('SELECT * FROM Account',
         mapper: (Map<String, Object?> row) => Account(
-            row['id'] as int,
+            row['id'] as int?,
             row['site_name'] as String,
             row['site_pin_yin_name'] as String,
             row['user_name'] as String,
@@ -190,7 +140,7 @@ class _$AccountDao extends AccountDao {
   Future<Account?> findById(int id) async {
     return _queryAdapter.query('SELECT * FROM Account WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Account(
-            row['id'] as int,
+            row['id'] as int?,
             row['site_name'] as String,
             row['site_pin_yin_name'] as String,
             row['user_name'] as String,
@@ -203,7 +153,8 @@ class _$AccountDao extends AccountDao {
   }
 
   @override
-  Future<void> add(Account account) async {
-    await _accountInsertionAdapter.insert(account, OnConflictStrategy.abort);
+  Future<int> add(Account account) {
+    return _accountInsertionAdapter.insertAndReturnId(
+        account, OnConflictStrategy.abort);
   }
 }

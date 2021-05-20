@@ -1,4 +1,7 @@
+import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:my_password_flutter/dbconfig/database_utils.dart';
+import 'package:my_password_flutter/entity/account.dart';
 
 class AccountPage extends StatefulWidget {
   int currentId = 0;
@@ -30,10 +33,29 @@ class AccountState extends State<AccountPage> {
         child: ElevatedButton(
           child: Text('返回上一页'),
           onPressed: () {
-            Navigator.of(context).pop();
+            var account = new Account(
+                null,
+                getRandomWords(),
+                getRandomWords(),
+                getRandomWords(),
+                getRandomWords(),
+                getRandomWords(),
+                getRandomWords(),
+                getRandomWords(),
+                getRandomWords());
+            DatabaseUtils.getDatabase().then((db) {
+              db.accountDao.add(account).then((id) {
+                print("自动生成的id: " + id.toString());
+                Navigator.of(context).pop();
+              });
+            });
           },
         ),
       ),
     );
+  }
+
+  String getRandomWords() {
+    return new WordPair.random().first;
   }
 }

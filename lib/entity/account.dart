@@ -2,8 +2,8 @@ import 'package:floor/floor.dart';
 
 @entity
 class Account {
-  @primaryKey
-  final int id;
+  @PrimaryKey(autoGenerate: true)
+  final int? id;
   final String site_name;
   final String site_pin_yin_name;
   final String user_name;

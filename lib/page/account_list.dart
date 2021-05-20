@@ -1,5 +1,7 @@
-import 'package:english_words/english_words.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_password_flutter/dbconfig/database_utils.dart';
+import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/page/account.dart';
 
 final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -12,7 +14,7 @@ class AccountListPage extends StatefulWidget {
 }
 
 class AccountListState extends State<AccountListPage> {
-  var wordList = new List.from(generateWordPairs().take(20));
+  List<Account> accountList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +34,22 @@ class AccountListState extends State<AccountListPage> {
   }
 
   Widget _buildRowList() {
+    // 查询
+    DatabaseUtils.getDatabase().then((db) => {
+          db.accountDao.findAll().then((accountList) => {
+                setState(() {
+                  this.accountList = accountList;
+                })
+              })
+        });
+
     return new ListView.builder(
         padding: const EdgeInsets.all(16.0),
         // 对于每个建议的单词对都会调用一次itemBuilder，然后将单词对添加到ListTile行中
         // 在偶数行，该函数会为单词对添加一个ListTile row.
         // 在奇数行，该函数会添加一个分割线widget，来分隔相邻的词对。
         // 注意，在小屏幕上，分割线看起来可能比较吃力。
-        itemCount: wordList.length,
+        itemCount: accountList.length,
         itemBuilder: (context, i) {
           // 在每一列之前，添加一个1像素高的分隔线widget
           // if (i.isOdd) return new Divider();
@@ -47,10 +58,10 @@ class AccountListState extends State<AccountListPage> {
   }
 
   Widget _buildRow(index) {
-    String word = wordList[index].asPascalCase;
+    Account account = this.accountList[index];
     return new ListTile(
       title: new Text(
-        index.toString() + "、" + word,
+        account.id.toString() + "、" + account.site_name,
         style: _biggerFont,
       ),
       onTap: () {
