@@ -2,6 +2,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_password_flutter/page/account.dart';
 
 final _biggerFont = const TextStyle(fontSize: 18.0);
 
@@ -33,7 +34,8 @@ class AccountListState extends State<AccountListPage> {
               child: Icon(Icons.accessibility),
               label: 'First',
               onTap: () {
-                Fluttertoast.showToast(msg: 'First');
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => AccountPage(0)));
               }),
           SpeedDialChild(
               child: Icon(Icons.brush),
@@ -70,7 +72,8 @@ class AccountListState extends State<AccountListPage> {
         style: _biggerFont,
       ),
       onTap: () {
-        Fluttertoast.showToast(msg: word + " clicked!!");
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => AccountPage(index)));
       },
     );
   }
