@@ -147,7 +147,8 @@ class _$PersonDao extends PersonDao {
 
 class _$AccountDao extends AccountDao {
   _$AccountDao(this.database, this.changeListener)
-      : _accountInsertionAdapter = InsertionAdapter(
+      : _queryAdapter = QueryAdapter(database),
+        _accountInsertionAdapter = InsertionAdapter(
             database,
             'Account',
             (Account item) => <String, Object?>{
@@ -166,7 +167,40 @@ class _$AccountDao extends AccountDao {
 
   final StreamController<String> changeListener;
 
+  final QueryAdapter _queryAdapter;
+
   final InsertionAdapter<Account> _accountInsertionAdapter;
+
+  @override
+  Future<List<Account>> findAll() async {
+    return _queryAdapter.queryList('SELECT * FROM Account',
+        mapper: (Map<String, Object?> row) => Account(
+            row['id'] as int,
+            row['site_name'] as String,
+            row['site_pin_yin_name'] as String,
+            row['user_name'] as String,
+            row['password'] as String,
+            row['remarks'] as String,
+            row['create_time'] as String,
+            row['update_time'] as String,
+            row['memo'] as String));
+  }
+
+  @override
+  Future<Account?> findById(int id) async {
+    return _queryAdapter.query('SELECT * FROM Account WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => Account(
+            row['id'] as int,
+            row['site_name'] as String,
+            row['site_pin_yin_name'] as String,
+            row['user_name'] as String,
+            row['password'] as String,
+            row['remarks'] as String,
+            row['create_time'] as String,
+            row['update_time'] as String,
+            row['memo'] as String),
+        arguments: [id]);
+  }
 
   @override
   Future<void> add(Account account) async {

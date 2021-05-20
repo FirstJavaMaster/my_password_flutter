@@ -1,5 +1,3 @@
-// database.dart
-
 // required package imports
 import 'dart:async';
 import 'package:floor/floor.dart';

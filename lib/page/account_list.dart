@@ -1,7 +1,5 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/page/account.dart';
 
 final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -22,28 +20,12 @@ class AccountListState extends State<AccountListPage> {
       appBar: new AppBar(
         title: new Text('My Password'),
       ),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        activeIcon: Icons.close,
-        iconTheme: IconThemeData(size: 30),
-        backgroundColor: Colors.blue,
-        overlayColor: Colors.black,
-        overlayOpacity: 0.5,
-        children: [
-          SpeedDialChild(
-              child: Icon(Icons.accessibility),
-              label: 'First',
-              onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => AccountPage(0)));
-              }),
-          SpeedDialChild(
-              child: Icon(Icons.brush),
-              label: 'Second',
-              onTap: () {
-                Fluttertoast.showToast(msg: 'Second');
-              })
-        ],
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => AccountPage(0)));
+        },
       ),
       body: _buildRowList(),
     );
