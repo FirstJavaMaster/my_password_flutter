@@ -31,7 +31,7 @@ class AccountListState extends State<AccountListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => print('abc'));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _dealRouterReturn(value));
         },
       ),
       body: RefreshIndicator(
@@ -43,8 +43,8 @@ class AccountListState extends State<AccountListPage> {
     );
   }
 
+  // 查询列表
   void _getAccountList() {
-    // 查询
     DatabaseUtils.getDatabase().then((db) => {
           db.accountDao.findAll().then((accountList) => {
                 setState(() {
@@ -78,8 +78,15 @@ class AccountListState extends State<AccountListPage> {
         style: _biggerFont,
       ),
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _dealRouterReturn(value));
       },
     );
+  }
+
+  void _dealRouterReturn(value) {
+    if (value == null || value == false || value == '') {
+      return;
+    }
+    _getAccountList();
   }
 }
