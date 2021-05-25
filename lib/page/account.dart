@@ -1,56 +1,152 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 
 class AccountPage extends StatefulWidget {
-  int currentId = 0;
+  int id = 0;
 
-  AccountPage(this.currentId);
+  AccountPage(this.id);
 
   @override
   State<StatefulWidget> createState() {
-    return new AccountState(currentId);
+    return new AccountState(id);
   }
 }
 
 class AccountState extends State<AccountPage> {
-  int currentId = 0;
+  int id = 0;
   bool isCreate = true;
+  Account account = Account.ofEmpty();
 
-  AccountState(int currentId) {
-    this.currentId = currentId;
-    this.isCreate = currentId == 0;
+  // 表单key
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // 构造方法
+  AccountState(int id) {
+    this.id = id;
+    this.isCreate = id == 0;
+
+    DatabaseUtils.getDatabase().then((db) {
+      db.accountDao.findById(this.id).then((account) {
+        print('查询ID: $id  --> $account');
+        setState(() {
+          this.account = account ?? Account.ofEmpty();
+        });
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(isCreate ? '创建账号' : '账号详情'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('返回上一页'),
-          onPressed: () {
-            var account = new Account(
-                null,
-                getRandomWords(),
-                getRandomWords(),
-                getRandomWords(),
-                getRandomWords(),
-                getRandomWords(),
-                getRandomWords(),
-                getRandomWords(),
-                getRandomWords());
-            DatabaseUtils.getDatabase().then((db) {
-              db.accountDao.add(account).then((id) {
-                print("自动生成的id: " + id.toString());
-                Navigator.of(context).pop();
-              });
-            });
-          },
-        ),
+      body: _buildForm(),
+    );
+  }
+
+  Widget _buildForm() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(labelText: '网站名称'),
+                    controller: TextEditingController(text: this.account.site_name),
+                    onChanged: (value) => {this.account.site_name = value},
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '请输入网站名称';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: '用户名'),
+                    controller: TextEditingController(text: this.account.user_name),
+                    onChanged: (value) => {this.account.user_name = value},
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: '密码'),
+                    controller: TextEditingController(text: this.account.password),
+                    onChanged: (value) => {this.account.password = value},
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: '其他备注'),
+                    controller: TextEditingController(text: this.account.memo),
+                    onChanged: (value) => {this.account.memo = value},
+                    minLines: 4,
+                    maxLines: 8,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return null;
+                      }
+                      if (value.length > 200) {
+                        return '内容长度不可超过200';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              )),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              ElevatedButton(
+                child: Text('校 验'),
+                onPressed: () {
+                  var validateResult = _formKey.currentState!.validate();
+                  Fluttertoast.showToast(msg: validateResult ? '校验成功' : '校验失败');
+                },
+              ),
+              ElevatedButton(
+                child: Text('保 存'),
+                onPressed: () {
+                  bool validateResult = _formKey.currentState!.validate();
+                  if (!validateResult) {
+                    return;
+                  }
+                  DatabaseUtils.getDatabase().then((db) {
+                    db.accountDao.add(account);
+                    Fluttertoast.showToast(msg: '保存成功');
+                  });
+                },
+              ),
+              ElevatedButton(
+                child: Text('+ +'),
+                onPressed: () {
+                  var account = Account(null, getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(),
+                      getRandomWords(), getRandomWords());
+                  DatabaseUtils.getDatabase().then((db) {
+                    db.accountDao.add(account).then((id) {
+                      print("自动生成的id: " + id.toString());
+                      Navigator.of(context).pop();
+                    });
+                  });
+                },
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              ElevatedButton(
+                child: Text('<- 返回'),
+                onPressed: () {
+                  Navigator.pop(context, '123');
+                },
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

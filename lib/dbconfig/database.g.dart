@@ -155,6 +155,6 @@ class _$AccountDao extends AccountDao {
   @override
   Future<int> add(Account account) {
     return _accountInsertionAdapter.insertAndReturnId(
-        account, OnConflictStrategy.abort);
+        account, OnConflictStrategy.replace);
   }
 }

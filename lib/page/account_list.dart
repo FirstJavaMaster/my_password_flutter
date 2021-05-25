@@ -17,6 +17,12 @@ class AccountListState extends State<AccountListPage> {
   List<Account> accountList = [];
 
   @override
+  void initState() {
+    super.initState();
+    _getAccountList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
@@ -25,24 +31,31 @@ class AccountListState extends State<AccountListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => AccountPage(0)));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => print('abc'));
         },
       ),
-      body: _buildRowList(),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _getAccountList();
+        },
+        child: _buildRowList(),
+      ),
     );
   }
 
-  Widget _buildRowList() {
+  void _getAccountList() {
     // 查询
     DatabaseUtils.getDatabase().then((db) => {
           db.accountDao.findAll().then((accountList) => {
                 setState(() {
                   this.accountList = accountList;
+                  print('查询列表: $accountList');
                 })
               })
         });
+  }
 
+  Widget _buildRowList() {
     return new ListView.builder(
         padding: const EdgeInsets.all(16.0),
         // 对于每个建议的单词对都会调用一次itemBuilder，然后将单词对添加到ListTile行中
@@ -65,8 +78,7 @@ class AccountListState extends State<AccountListPage> {
         style: _biggerFont,
       ),
       onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => AccountPage(index)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0)));
       },
     );
   }

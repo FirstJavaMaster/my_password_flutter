@@ -3,7 +3,7 @@ import 'package:my_password_flutter/entity/account.dart';
 
 @dao
 abstract class AccountDao {
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> add(Account account);
 
   @Query('SELECT * FROM Account')

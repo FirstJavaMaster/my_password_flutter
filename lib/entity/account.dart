@@ -3,26 +3,22 @@ import 'package:floor/floor.dart';
 @entity
 class Account {
   @PrimaryKey(autoGenerate: true)
-  final int? id;
-  final String site_name;
-  final String site_pin_yin_name;
-  final String user_name;
-  final String password;
-  final String remarks;
-  final String create_time;
-  final String update_time;
-  final String memo;
+  int? id;
+  String site_name = '';
+  String site_pin_yin_name = '';
+  String user_name = '';
+  String password = '';
+  String remarks = '';
+  String create_time = '';
+  String update_time = '';
+  String memo = '';
 
-  Account(
-      this.id,
-      this.site_name,
-      this.site_pin_yin_name,
-      this.user_name,
-      this.password,
-      this.remarks,
-      this.create_time,
-      this.update_time,
-      this.memo);
+  Account(this.id, this.site_name, this.site_pin_yin_name, this.user_name, this.password, this.remarks, this.create_time, this.update_time, this.memo);
+
+  static Account ofEmpty() {
+    Account account = Account(null, '', '', '', '', '', '', '', '');
+    return account;
+  }
 
   @override
   String toString() {
