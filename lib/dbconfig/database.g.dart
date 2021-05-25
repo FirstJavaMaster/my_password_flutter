@@ -62,6 +62,8 @@ class _$AppDatabase extends AppDatabase {
 
   AccountDao? _accountDaoInstance;
 
+  AccountRelationDao? _accountRelationDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -82,6 +84,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `site_name` TEXT NOT NULL, `site_pin_yin_name` TEXT NOT NULL, `user_name` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `create_time` TEXT NOT NULL, `update_time` TEXT NOT NULL, `memo` TEXT NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `AccountRelation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `source_id` INTEGER NOT NULL, `target_id` INTEGER NOT NULL, `memo` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -92,6 +96,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   AccountDao get accountDao {
     return _accountDaoInstance ??= _$AccountDao(database, changeListener);
+  }
+
+  @override
+  AccountRelationDao get accountRelationDao {
+    return _accountRelationDaoInstance ??=
+        _$AccountRelationDao(database, changeListener);
   }
 }
 
@@ -156,5 +166,54 @@ class _$AccountDao extends AccountDao {
   Future<int> add(Account account) {
     return _accountInsertionAdapter.insertAndReturnId(
         account, OnConflictStrategy.replace);
+  }
+}
+
+class _$AccountRelationDao extends AccountRelationDao {
+  _$AccountRelationDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _accountRelationInsertionAdapter = InsertionAdapter(
+            database,
+            'AccountRelation',
+            (AccountRelation item) => <String, Object?>{
+                  'id': item.id,
+                  'source_id': item.source_id,
+                  'target_id': item.target_id,
+                  'memo': item.memo
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<AccountRelation> _accountRelationInsertionAdapter;
+
+  @override
+  Future<List<AccountRelation>> findAll() async {
+    return _queryAdapter.queryList('SELECT * FROM AccountRelation',
+        mapper: (Map<String, Object?> row) => AccountRelation(
+            row['id'] as int?,
+            row['source_id'] as int,
+            row['target_id'] as int,
+            row['memo'] as String));
+  }
+
+  @override
+  Future<AccountRelation?> findById(int id) async {
+    return _queryAdapter.query('SELECT * FROM AccountRelation WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => AccountRelation(
+            row['id'] as int?,
+            row['source_id'] as int,
+            row['target_id'] as int,
+            row['memo'] as String),
+        arguments: [id]);
+  }
+
+  @override
+  Future<int> add(AccountRelation accountRelation) {
+    return _accountRelationInsertionAdapter.insertAndReturnId(
+        accountRelation, OnConflictStrategy.replace);
   }
 }

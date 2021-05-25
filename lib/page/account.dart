@@ -116,6 +116,7 @@ class AccountState extends State<AccountPage> {
                     return;
                   }
                   DatabaseUtils.getDatabase().then((db) {
+                    account.update_time = DateTime.now().toString();
                     db.accountDao.add(account);
                     Fluttertoast.showToast(msg: '保存成功');
                   });
@@ -124,12 +125,11 @@ class AccountState extends State<AccountPage> {
               ElevatedButton(
                 child: Text('+ +'),
                 onPressed: () {
-                  var account = Account(null, getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(),
-                      getRandomWords(), getRandomWords());
+                  var account = Account(null, getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(),
+                      DateTime.now().toString(), DateTime.now().toString(), getRandomWords());
                   DatabaseUtils.getDatabase().then((db) {
                     db.accountDao.add(account).then((id) {
-                      print("自动生成的id: " + id.toString());
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(true);
                     });
                   });
                 },
