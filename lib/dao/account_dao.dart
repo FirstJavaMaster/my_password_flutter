@@ -11,4 +11,7 @@ abstract class AccountDao {
 
   @Query('SELECT * FROM Account WHERE id = :id')
   Future<Account?> findById(int id);
+
+  @delete
+  Future<int> deleteByEntity(Account account);
 }

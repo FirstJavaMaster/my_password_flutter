@@ -121,6 +121,21 @@ class _$AccountDao extends AccountDao {
                   'create_time': item.create_time,
                   'update_time': item.update_time,
                   'memo': item.memo
+                }),
+        _accountDeletionAdapter = DeletionAdapter(
+            database,
+            'Account',
+            ['id'],
+            (Account item) => <String, Object?>{
+                  'id': item.id,
+                  'site_name': item.site_name,
+                  'site_pin_yin_name': item.site_pin_yin_name,
+                  'user_name': item.user_name,
+                  'password': item.password,
+                  'remarks': item.remarks,
+                  'create_time': item.create_time,
+                  'update_time': item.update_time,
+                  'memo': item.memo
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -130,6 +145,8 @@ class _$AccountDao extends AccountDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<Account> _accountInsertionAdapter;
+
+  final DeletionAdapter<Account> _accountDeletionAdapter;
 
   @override
   Future<List<Account>> findAll() async {
@@ -166,6 +183,11 @@ class _$AccountDao extends AccountDao {
   Future<int> add(Account account) {
     return _accountInsertionAdapter.insertAndReturnId(
         account, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<int> deleteByEntity(Account account) {
+    return _accountDeletionAdapter.deleteAndReturnChangedRows(account);
   }
 }
 
@@ -223,6 +245,13 @@ class _$AccountRelationDao extends AccountRelationDao {
             row['target_id'] as int,
             row['memo'] as String),
         arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteByAccountId(int accountId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM AccountRelation WHERE source_id = ?1 or target_id = ?1',
+        arguments: [accountId]);
   }
 
   @override

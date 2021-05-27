@@ -14,4 +14,7 @@ abstract class AccountRelationDao {
 
   @delete
   Future<int> deleteByEntity(AccountRelation accountRelation);
+
+  @Query('DELETE FROM AccountRelation WHERE source_id = :accountId or target_id = :accountId')
+  Future<void> deleteByAccountId(int accountId);
 }

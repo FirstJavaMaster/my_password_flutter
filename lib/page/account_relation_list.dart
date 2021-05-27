@@ -53,69 +53,47 @@ class AccountRelationListState extends State<AccountRelationList> {
   Widget build(BuildContext context) {
     return Column(
       children: () {
-        List<Widget> rowList = [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                child: Text('点击添加 +'),
-                onPressed: () {
-                  _showDialogOfAccountPick();
-                },
-              ),
-            ],
-          )
-        ];
-        var formalList = this.relationList.map((relation) {
+        var divider = Divider();
+        List<Widget> rowList = [];
+        this.relationList.forEach((relation) {
+          if (rowList.isNotEmpty) {
+            rowList.add(divider);
+          }
           var targetAccount = accountList.firstWhere((account) => account.id == relation.target_id);
-          String title = relation.source_id.toString() + ' - ' + targetAccount.site_name + ' - ' + targetAccount.user_name;
-          return Row(
+          var row = Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                targetAccount.site_name + ' - ' + targetAccount.user_name,
                 textScaleFactor: 1.2,
               ),
-              OutlinedButton(
+              TextButton(
                 child: Text('移除'),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('提示'),
-                        content: Text('确定要删除此关联关系吗?'),
-                        actions: [
-                          TextButton(
-                            child: Text('取消'),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          TextButton(
-                            child: Text('删除', style: TextStyle(color: Colors.red)),
-                            onPressed: () {
-                              DatabaseUtils.getDatabase().then((db) {
-                                db.accountRelationDao.deleteByEntity(relation).then((value) {
-                                  setState(() {
-                                    relationList = relationList.where((element) => element.id != relation.id).toList();
-                                    Navigator.of(context).pop(true);
-                                  });
-                                });
-                              });
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.red),
-                ),
+                onPressed: () => _deleteRelation(relation),
+                style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
               )
             ],
           );
-        }).toList();
-        rowList.addAll(formalList);
+          rowList.add(row);
+        });
+        // 添加最后一个下划线和按钮
+        if (rowList.isNotEmpty) {
+          rowList.add(divider);
+        }
+        rowList.add(Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              child: Text(
+                '点击添加 +',
+                textScaleFactor: 1.1,
+              ),
+              onPressed: () {
+                _showDialogOfAccountPick();
+              },
+            ),
+          ],
+        ));
         return rowList;
       }(),
     );
@@ -154,6 +132,9 @@ class AccountRelationListState extends State<AccountRelationList> {
           );
         },
       ).then((targetId) {
+        if (targetId == null) {
+          return;
+        }
         // 添加关联关系
         var relation = AccountRelation(null, sourceId, targetId, '');
         DatabaseUtils.getDatabase().then((db) {
@@ -201,5 +182,36 @@ class AccountRelationListState extends State<AccountRelationList> {
             ),
           );
         }).then((value) => print(value));
+  }
+
+  void _deleteRelation(AccountRelation relation) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('提示'),
+          content: Text('确定要删除此关联关系吗?'),
+          actions: [
+            TextButton(
+              child: Text('取消'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('删除', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                DatabaseUtils.getDatabase().then((db) {
+                  db.accountRelationDao.deleteByEntity(relation).then((value) {
+                    setState(() {
+                      relationList = relationList.where((element) => element.id != relation.id).toList();
+                      Navigator.of(context).pop(true);
+                    });
+                  });
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
