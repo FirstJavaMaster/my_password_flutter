@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
+import 'package:my_password_flutter/page/account_relation_list.dart';
 
 class AccountPage extends StatefulWidget {
   int id = 0;
@@ -53,6 +54,12 @@ class AccountState extends State<AccountPage> {
       padding: EdgeInsets.all(10),
       child: Column(
         children: [
+          Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                '基本信息',
+                textScaleFactor: 1.5,
+              )),
           Form(
               key: _formKey,
               child: Column(
@@ -96,9 +103,13 @@ class AccountState extends State<AccountPage> {
                   ),
                 ],
               )),
-          SizedBox(
-            height: 10,
-          ),
+          Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                '关联账号',
+                textScaleFactor: 1.5,
+              )),
+          AccountRelationList(id),
           Row(
             children: [
               ElevatedButton(
@@ -137,6 +148,7 @@ class AccountState extends State<AccountPage> {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton(
                 child: Text('<- 返回'),

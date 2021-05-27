@@ -84,6 +84,7 @@ class AccountListState extends State<AccountListPage> {
   }
 
   void _dealRouterReturn(value) {
+    print('父节点收到返回信息 $value');
     if (value == null || value == false || value == '') {
       return;
     }

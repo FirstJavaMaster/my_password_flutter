@@ -180,6 +180,16 @@ class _$AccountRelationDao extends AccountRelationDao {
                   'source_id': item.source_id,
                   'target_id': item.target_id,
                   'memo': item.memo
+                }),
+        _accountRelationDeletionAdapter = DeletionAdapter(
+            database,
+            'AccountRelation',
+            ['id'],
+            (AccountRelation item) => <String, Object?>{
+                  'id': item.id,
+                  'source_id': item.source_id,
+                  'target_id': item.target_id,
+                  'memo': item.memo
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -190,14 +200,18 @@ class _$AccountRelationDao extends AccountRelationDao {
 
   final InsertionAdapter<AccountRelation> _accountRelationInsertionAdapter;
 
+  final DeletionAdapter<AccountRelation> _accountRelationDeletionAdapter;
+
   @override
-  Future<List<AccountRelation>> findAll() async {
-    return _queryAdapter.queryList('SELECT * FROM AccountRelation',
+  Future<List<AccountRelation>> findListBySourceId(int sourceId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM AccountRelation WHERE source_id = ?1',
         mapper: (Map<String, Object?> row) => AccountRelation(
             row['id'] as int?,
             row['source_id'] as int,
             row['target_id'] as int,
-            row['memo'] as String));
+            row['memo'] as String),
+        arguments: [sourceId]);
   }
 
   @override
@@ -215,5 +229,11 @@ class _$AccountRelationDao extends AccountRelationDao {
   Future<int> add(AccountRelation accountRelation) {
     return _accountRelationInsertionAdapter.insertAndReturnId(
         accountRelation, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<int> deleteByEntity(AccountRelation accountRelation) {
+    return _accountRelationDeletionAdapter
+        .deleteAndReturnChangedRows(accountRelation);
   }
 }
