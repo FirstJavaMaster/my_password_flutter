@@ -18,9 +18,14 @@ class AccountPage extends StatefulWidget {
 }
 
 class AccountState extends State<AccountPage> {
+  // 当前id
   int id = 0;
-  bool isCreate = true;
+
+  // 当前 account
   Account account = Account.ofEmpty();
+
+  // 是否数据已经被更新. 决定了"保存"按钮的状态
+  bool dataChanged = false;
 
   // 表单key
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -28,11 +33,8 @@ class AccountState extends State<AccountPage> {
   // 构造方法
   AccountState(int id) {
     this.id = id;
-    this.isCreate = id == 0;
-
     DatabaseUtils.getDatabase().then((db) {
       db.accountDao.findById(this.id).then((account) {
-        print('查询ID: $id  --> $account');
         setState(() {
           this.account = account ?? Account.ofEmpty();
         });
@@ -44,7 +46,7 @@ class AccountState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isCreate ? '创建账号' : '账号详情'),
+        title: Text(id == 0 ? '创建账号' : '账号详情'),
       ),
       body: _buildPage(),
     );
@@ -71,18 +73,20 @@ class AccountState extends State<AccountPage> {
           _buildButton(
             ElevatedButton(
               child: Text('保 存'),
-              onPressed: () {
-                bool validateResult = _formKey.currentState!.validate();
-                if (!validateResult) {
-                  return;
-                }
-                DatabaseUtils.getDatabase().then((db) {
-                  account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
-                  account.update_time = DateTime.now().toString();
-                  db.accountDao.add(account).then((id) => account.id = id);
-                  Fluttertoast.showToast(msg: '保存成功');
-                });
-              },
+              onPressed: dataChanged
+                  ? () {
+                      bool validateResult = _formKey.currentState!.validate();
+                      if (!validateResult) {
+                        return;
+                      }
+                      DatabaseUtils.getDatabase().then((db) {
+                        account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
+                        account.update_time = DateTime.now().toString();
+                        db.accountDao.add(account).then((id) => account.id = id);
+                        Fluttertoast.showToast(msg: '保存成功');
+                      });
+                    }
+                  : null,
             ),
           ),
           _buildButton(
@@ -103,7 +107,7 @@ class AccountState extends State<AccountPage> {
             OutlinedButton(
               child: Text('删 除'),
               style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
-              onPressed: () => _deleteAccount(),
+              onPressed: id == 0 ? null : () => _deleteAccount(),
             ),
           ),
           SizedBox(
@@ -122,7 +126,12 @@ class AccountState extends State<AccountPage> {
             TextFormField(
               decoration: InputDecoration(labelText: '网站名称'),
               controller: TextEditingController(text: this.account.site_name),
-              onChanged: (value) => {this.account.site_name = value},
+              onChanged: (value) {
+                setState(() {
+                  account.site_name = value;
+                  dataChanged = true;
+                });
+              },
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '请输入网站名称';
@@ -133,17 +142,32 @@ class AccountState extends State<AccountPage> {
             TextFormField(
               decoration: InputDecoration(labelText: '用户名'),
               controller: TextEditingController(text: this.account.user_name),
-              onChanged: (value) => {this.account.user_name = value},
+              onChanged: (value) {
+                setState(() {
+                  account.user_name = value;
+                  dataChanged = true;
+                });
+              },
             ),
             TextFormField(
               decoration: InputDecoration(labelText: '密码'),
               controller: TextEditingController(text: this.account.password),
-              onChanged: (value) => {this.account.password = value},
+              onChanged: (value) {
+                setState(() {
+                  account.password = value;
+                  dataChanged = true;
+                });
+              },
             ),
             TextFormField(
               decoration: InputDecoration(labelText: '其他备注'),
               controller: TextEditingController(text: this.account.memo),
-              onChanged: (value) => {this.account.memo = value},
+              onChanged: (value) {
+                setState(() {
+                  account.memo = value;
+                  dataChanged = true;
+                });
+              },
               minLines: 4,
               maxLines: 8,
               validator: (value) {
@@ -193,7 +217,7 @@ class AccountState extends State<AccountPage> {
           actions: [
             TextButton(
               child: Text('取消'),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).pop(false),
             ),
             TextButton(
               child: Text('删除', style: TextStyle(color: Colors.red)),
@@ -202,7 +226,7 @@ class AccountState extends State<AccountPage> {
                   db.accountRelationDao.deleteByAccountId(id);
                   db.accountDao.deleteByEntity(account).then((value) {
                     Fluttertoast.showToast(msg: '删除成功');
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(true);
                   });
                 });
               },
@@ -210,6 +234,6 @@ class AccountState extends State<AccountPage> {
           ],
         );
       },
-    ).then((value) => Navigator.of(context).pop(true));
+    ).then((value) => value ? Navigator.of(context).pop(true) : null);
   }
 }
