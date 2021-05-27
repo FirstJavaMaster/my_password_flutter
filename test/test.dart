@@ -1,6 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lpinyin/lpinyin.dart';
 
 void main() {
+  test('test pinyin', () {
+    String s = '测试中文';
+    String s0 = '奇偶';
+    String s1 = '奇怪';
+    String s2 = '0123#!@#';
+    String s3 = 'english';
+
+    print(PinyinHelper.getPinyin(s));
+    print(PinyinHelper.getPinyin(s0));
+    print(PinyinHelper.getPinyin(s1));
+    print(PinyinHelper.getPinyin(s2));
+    print(PinyinHelper.getPinyin(s3));
+  });
+
   test('date time test', () {
     var now = DateTime.now();
     var nowString = now.toString();

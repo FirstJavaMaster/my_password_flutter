@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lpinyin/lpinyin.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/page/account_relation_list.dart';
@@ -54,12 +55,10 @@ class AccountState extends State<AccountPage> {
       padding: EdgeInsets.all(10),
       child: Column(
         children: [
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                '基本信息',
-                textScaleFactor: 1.5,
-              )),
+          Text(
+            '基本信息',
+            textScaleFactor: 1.5,
+          ),
           Form(
               key: _formKey,
               child: Column(
@@ -103,12 +102,10 @@ class AccountState extends State<AccountPage> {
                   ),
                 ],
               )),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                '关联账号',
-                textScaleFactor: 1.5,
-              )),
+          Text(
+            '关联账号',
+            textScaleFactor: 1.5,
+          ),
           AccountRelationList(id),
           Row(
             children: [
@@ -127,6 +124,7 @@ class AccountState extends State<AccountPage> {
                     return;
                   }
                   DatabaseUtils.getDatabase().then((db) {
+                    account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
                     account.update_time = DateTime.now().toString();
                     db.accountDao.add(account);
                     Fluttertoast.showToast(msg: '保存成功');
