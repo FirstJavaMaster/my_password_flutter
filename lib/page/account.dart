@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,7 +27,7 @@ class AccountState extends State<AccountPage> {
   Account account = Account.ofEmpty();
 
   // 是否数据已经被更新. 决定了"保存"按钮的状态
-  bool dataChanged = false;
+  final StreamController<bool> dataChangedSC = StreamController();
 
   // 表单key
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -40,6 +42,12 @@ class AccountState extends State<AccountPage> {
         });
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dataChangedSC.close();
   }
 
   @override
@@ -70,24 +78,29 @@ class AccountState extends State<AccountPage> {
               child: AccountRelationList(id),
             ),
           ),
-          _buildButton(
-            ElevatedButton(
-              child: Text('保 存'),
-              onPressed: dataChanged
-                  ? () {
-                      bool validateResult = _formKey.currentState!.validate();
-                      if (!validateResult) {
-                        return;
+          StreamBuilder<bool>(
+            stream: dataChangedSC.stream,
+            initialData: false,
+            builder: (context, snapshot) {
+              return _buildButton(ElevatedButton(
+                child: Text('保 存'),
+                onPressed: (snapshot.data ?? false)
+                    ? () {
+                        bool validateResult = _formKey.currentState!.validate();
+                        if (!validateResult) {
+                          return;
+                        }
+                        DatabaseUtils.getDatabase().then((db) {
+                          account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
+                          account.update_time = DateTime.now().toString();
+                          db.accountDao.add(account).then((id) => account.id = id);
+                          dataChangedSC.sink.add(false);
+                          Fluttertoast.showToast(msg: '保存成功');
+                        });
                       }
-                      DatabaseUtils.getDatabase().then((db) {
-                        account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
-                        account.update_time = DateTime.now().toString();
-                        db.accountDao.add(account).then((id) => account.id = id);
-                        Fluttertoast.showToast(msg: '保存成功');
-                      });
-                    }
-                  : null,
-            ),
+                    : null,
+              ));
+            },
           ),
           _buildButton(
             ElevatedButton(
@@ -124,13 +137,14 @@ class AccountState extends State<AccountPage> {
         child: Column(
           children: [
             TextFormField(
-              decoration: InputDecoration(labelText: '网站名称'),
+              decoration: InputDecoration(labelText: '网站名称', border: OutlineInputBorder()),
               controller: TextEditingController(text: this.account.site_name),
               onChanged: (value) {
-                setState(() {
-                  account.site_name = value;
-                  dataChanged = true;
-                });
+                if (account.site_name == value) {
+                  return;
+                }
+                account.site_name = value;
+                dataChangedSC.sink.add(true);
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -139,34 +153,40 @@ class AccountState extends State<AccountPage> {
                 return null;
               },
             ),
+            SizedBox(height: 10),
             TextFormField(
-              decoration: InputDecoration(labelText: '用户名'),
+              decoration: InputDecoration(labelText: '用户名', border: OutlineInputBorder()),
               controller: TextEditingController(text: this.account.user_name),
               onChanged: (value) {
-                setState(() {
-                  account.user_name = value;
-                  dataChanged = true;
-                });
+                if (account.user_name == value) {
+                  return;
+                }
+                account.user_name = value;
+                dataChangedSC.sink.add(true);
               },
             ),
+            SizedBox(height: 10),
             TextFormField(
-              decoration: InputDecoration(labelText: '密码'),
+              decoration: InputDecoration(labelText: '密码', border: OutlineInputBorder()),
               controller: TextEditingController(text: this.account.password),
               onChanged: (value) {
-                setState(() {
-                  account.password = value;
-                  dataChanged = true;
-                });
+                if (account.password == value) {
+                  return;
+                }
+                account.password = value;
+                dataChangedSC.sink.add(true);
               },
             ),
+            SizedBox(height: 10),
             TextFormField(
-              decoration: InputDecoration(labelText: '其他备注'),
+              decoration: InputDecoration(labelText: '其他备注', border: OutlineInputBorder()),
               controller: TextEditingController(text: this.account.memo),
               onChanged: (value) {
-                setState(() {
-                  account.memo = value;
-                  dataChanged = true;
-                });
+                if (account.memo == value) {
+                  return;
+                }
+                account.memo = value;
+                dataChangedSC.sink.add(true);
               },
               minLines: 4,
               maxLines: 8,
