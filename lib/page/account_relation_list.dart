@@ -44,7 +44,6 @@ class AccountRelationListState extends State<AccountRelationList> {
         this.accountList = accountList;
         db.accountRelationDao.findListBySourceId(sourceId).then((relationList) {
           setState(() {
-            print('查询关系列表 $relationList');
             this.relationList = relationList;
           });
         });

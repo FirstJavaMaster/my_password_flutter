@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/page/account.dart';
-
-final _biggerFont = const TextStyle(fontSize: 18.0);
 
 class AccountListPage extends StatefulWidget {
   @override
@@ -49,37 +49,54 @@ class AccountListState extends State<AccountListPage> {
           db.accountDao.findAll().then((accountList) => {
                 setState(() {
                   this.accountList = accountList;
-                  print('查询列表: $accountList');
                 })
               })
         });
   }
 
   Widget _buildRowList() {
-    return new ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        // 对于每个建议的单词对都会调用一次itemBuilder，然后将单词对添加到ListTile行中
-        // 在偶数行，该函数会为单词对添加一个ListTile row.
-        // 在奇数行，该函数会添加一个分割线widget，来分隔相邻的词对。
-        // 注意，在小屏幕上，分割线看起来可能比较吃力。
-        itemCount: accountList.length,
-        itemBuilder: (context, i) {
-          // 在每一列之前，添加一个1像素高的分隔线widget
-          // if (i.isOdd) return new Divider();
-          return _buildRow(i);
-        });
-  }
-
-  Widget _buildRow(index) {
-    Account account = this.accountList[index];
-    return new ListTile(
-      title: new Text(
-        account.id.toString() + "、" + account.site_name,
-        style: _biggerFont,
-      ),
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _dealRouterReturn(value));
+    return ListView.separated(
+      itemCount: accountList.length,
+      itemBuilder: (context, index) {
+        Account account = this.accountList[index];
+        return new ListTile(
+          title: new Text(
+            account.id.toString() + "、" + account.site_name,
+          ),
+          subtitle: Row(
+            children: [
+              InkWell(
+                child: Text(
+                  account.user_name,
+                  textScaleFactor: 1.2,
+                  style: TextStyle(height: 1.5),
+                ),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: account.user_name)).then((value) => Fluttertoast.showToast(msg: '已复制到剪切板'));
+                },
+              ),
+              Text(' - '),
+              InkWell(
+                child: Text(
+                  account.password,
+                  textScaleFactor: 1.2,
+                  style: TextStyle(height: 1.5),
+                ),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: account.password)).then((value) => Fluttertoast.showToast(msg: '已复制到剪切板'));
+                },
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.chevron_right),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _dealRouterReturn(value));
+            },
+          ),
+        );
       },
+      separatorBuilder: (context, index) => Divider(height: 1),
     );
   }
 
