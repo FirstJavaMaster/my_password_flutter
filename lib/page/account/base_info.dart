@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +84,8 @@ class BaseInfoState extends State<BaseInfo> {
                             this.account.id = id;
                             _dataChangedSC.sink.add(false);
                             Fluttertoast.showToast(msg: '保存成功');
+                            // 通知父组件
+                            IdChangeNotification(id).dispatch(context);
                           });
                         });
                       }
@@ -103,14 +104,6 @@ class BaseInfoState extends State<BaseInfo> {
                     Navigator.of(context).pop(true);
                   });
                 });
-              },
-            ),
-          ),
-          _buildButton(
-            ElevatedButton(
-              child: Text('change'),
-              onPressed: () {
-                IdChangeNotification(Random().nextInt(100)).dispatch(context);
               },
             ),
           ),

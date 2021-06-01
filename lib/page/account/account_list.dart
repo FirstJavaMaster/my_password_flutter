@@ -56,8 +56,18 @@ class AccountListPageState extends State<AccountListPage> {
 
   Widget _buildRowList() {
     return ListView.separated(
-      itemCount: accountList.length,
+      itemCount: accountList.length + 1,
       itemBuilder: (context, index) {
+        // 最后一个列表项
+        if (index == accountList.length) {
+          return SizedBox(
+            height: 100,
+            child: Center(
+              child: Text('没有更多了 (＞﹏＜)'),
+            ),
+          );
+        }
+        // 正常的列表项
         Account account = this.accountList[index];
         return new ListTile(
           title: new Text(

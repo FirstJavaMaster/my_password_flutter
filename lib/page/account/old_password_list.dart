@@ -18,9 +18,11 @@ class OldPasswordState extends State<OldPasswordList> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      id.toString(),
-      textScaleFactor: 5,
-    );
+    return this.id == 0
+        ? Center(child: Text('< < 请先保存基本信息'))
+        : Text(
+            id.toString(),
+            textScaleFactor: 5,
+          );
   }
 }
