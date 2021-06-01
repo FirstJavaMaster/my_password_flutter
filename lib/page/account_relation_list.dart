@@ -53,52 +53,48 @@ class AccountRelationListState extends State<AccountRelationList> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: () {
-        var divider = Divider();
-        List<Widget> rowList = [];
-        this.relationList.forEach((relation) {
-          if (rowList.isNotEmpty) {
-            rowList.add(divider);
-          }
-          var targetAccount = accountList.firstWhere((account) => account.id == relation.target_id);
-          var row = Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        children: () {
+          List<Widget> rowList = [];
+          this.relationList.forEach((relation) {
+            var targetAccount = accountList.firstWhere((account) => account.id == relation.target_id);
+            var row = Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  targetAccount.site_name + ' - ' + targetAccount.user_name,
+                  textScaleFactor: 1.2,
+                ),
+                TextButton(
+                  child: Text('移除'),
+                  onPressed: () => _deleteRelation(relation),
+                  style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
+                )
+              ],
+            );
+            rowList.add(row);
+            rowList.add(Divider());
+          });
+          rowList.add(Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                targetAccount.site_name + ' - ' + targetAccount.user_name,
-                textScaleFactor: 1.2,
-              ),
               TextButton(
-                child: Text('移除'),
-                onPressed: () => _deleteRelation(relation),
-                style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
-              )
-            ],
-          );
-          rowList.add(row);
-        });
-        // 添加最后一个下划线和按钮
-        if (rowList.isNotEmpty) {
-          rowList.add(divider);
-        }
-        rowList.add(Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              child: Text(
-                '点击添加 +',
-                textScaleFactor: 1.1,
+                child: Text(
+                  '点击添加 +',
+                  textScaleFactor: 1.1,
+                ),
+                onPressed: () {
+                  _filterAccountList();
+                  _showDialogOfAccountPick();
+                },
               ),
-              onPressed: () {
-                _filterAccountList();
-                _showDialogOfAccountPick();
-              },
-            ),
-          ],
-        ));
-        return rowList;
-      }(),
+            ],
+          ));
+          return rowList;
+        }(),
+      ),
     );
   }
 
