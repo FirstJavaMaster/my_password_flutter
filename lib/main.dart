@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_password_flutter/page/account_list.dart';
+import 'package:my_password_flutter/page/account/account_list.dart';
 
 void main() => runApp(new MyApp());
 

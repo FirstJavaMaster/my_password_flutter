@@ -5,18 +5,18 @@ import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/entity/account_relation.dart';
 import 'package:my_password_flutter/utils/constants.dart';
 
-class AccountRelationList extends StatefulWidget {
+class RelationList extends StatefulWidget {
   final int sourceId;
 
-  AccountRelationList(this.sourceId);
+  RelationList(this.sourceId);
 
   @override
   State<StatefulWidget> createState() {
-    return AccountRelationListState(sourceId);
+    return RelationListState(sourceId);
   }
 }
 
-class AccountRelationListState extends State<AccountRelationList> {
+class RelationListState extends State<RelationList> {
   // 当前 account ID
   final int sourceId;
 
@@ -33,7 +33,7 @@ class AccountRelationListState extends State<AccountRelationList> {
   String keyword = '';
 
   // 构造方法
-  AccountRelationListState(this.sourceId);
+  RelationListState(this.sourceId);
 
   @override
   void initState() {

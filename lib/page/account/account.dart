@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_password_flutter/page/account_info.dart';
-import 'package:my_password_flutter/page/account_old_password_list.dart';
-import 'package:my_password_flutter/page/account_relation_list.dart';
+import 'package:my_password_flutter/page/account/base_info.dart';
+import 'package:my_password_flutter/page/account/old_password_list.dart';
+import 'package:my_password_flutter/page/account/relation_list.dart';
 
 class AccountPage extends StatefulWidget {
   int id = 0;
@@ -10,14 +10,14 @@ class AccountPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new AccountState(id);
+    return new AccountPageState(id);
   }
 }
 
-class AccountState extends State<AccountPage> {
+class AccountPageState extends State<AccountPage> {
   int id = 0;
 
-  AccountState(this.id);
+  AccountPageState(this.id);
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +38,8 @@ class AccountState extends State<AccountPage> {
         body: NotificationListener<IdChangeNotification>(
           child: TabBarView(
             children: [
-              AccountInfo(id),
-              AccountRelationList(id),
+              BaseInfo(id),
+              RelationList(id),
               OldPasswordList(id),
             ],
           ),

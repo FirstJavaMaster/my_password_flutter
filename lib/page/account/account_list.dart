@@ -4,16 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
-import 'package:my_password_flutter/page/account.dart';
+import 'package:my_password_flutter/page/account/account.dart';
 
 class AccountListPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new AccountListState();
+    return new AccountListPageState();
   }
 }
 
-class AccountListState extends State<AccountListPage> {
+class AccountListPageState extends State<AccountListPage> {
   List<Account> accountList = [];
 
   @override

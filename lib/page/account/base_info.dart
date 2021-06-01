@@ -7,20 +7,20 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
-import 'package:my_password_flutter/page/account.dart';
+import 'package:my_password_flutter/page/account/account.dart';
 
-class AccountInfo extends StatefulWidget {
+class BaseInfo extends StatefulWidget {
   int id;
 
-  AccountInfo(this.id);
+  BaseInfo(this.id);
 
   @override
   State<StatefulWidget> createState() {
-    return AccountInfoState(id);
+    return BaseInfoState(id);
   }
 }
 
-class AccountInfoState extends State<AccountInfo> {
+class BaseInfoState extends State<BaseInfo> {
   // 当前id
   int id;
 
@@ -34,7 +34,7 @@ class AccountInfoState extends State<AccountInfo> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // 构造方法
-  AccountInfoState(this.id);
+  BaseInfoState(this.id);
 
   @override
   void initState() {
