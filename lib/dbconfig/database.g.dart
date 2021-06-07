@@ -64,6 +64,8 @@ class _$AppDatabase extends AppDatabase {
 
   AccountRelationDao? _accountRelationDaoInstance;
 
+  OldPasswordDao? _oldPasswordDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -86,6 +88,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `site_name` TEXT NOT NULL, `site_pin_yin_name` TEXT NOT NULL, `user_name` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `create_time` TEXT NOT NULL, `update_time` TEXT NOT NULL, `memo` TEXT NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `AccountRelation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `source_id` INTEGER NOT NULL, `target_id` INTEGER NOT NULL, `memo` TEXT NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `OldPassword` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `accountId` INTEGER NOT NULL, `password` TEXT NOT NULL, `beginTime` TEXT NOT NULL, `memo` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -102,6 +106,12 @@ class _$AppDatabase extends AppDatabase {
   AccountRelationDao get accountRelationDao {
     return _accountRelationDaoInstance ??=
         _$AccountRelationDao(database, changeListener);
+  }
+
+  @override
+  OldPasswordDao get oldPasswordDao {
+    return _oldPasswordDaoInstance ??=
+        _$OldPasswordDao(database, changeListener);
   }
 }
 
@@ -264,5 +274,60 @@ class _$AccountRelationDao extends AccountRelationDao {
   Future<int> deleteByEntity(AccountRelation accountRelation) {
     return _accountRelationDeletionAdapter
         .deleteAndReturnChangedRows(accountRelation);
+  }
+}
+
+class _$OldPasswordDao extends OldPasswordDao {
+  _$OldPasswordDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _oldPasswordInsertionAdapter = InsertionAdapter(
+            database,
+            'OldPassword',
+            (OldPassword item) => <String, Object?>{
+                  'id': item.id,
+                  'accountId': item.accountId,
+                  'password': item.password,
+                  'beginTime': item.beginTime,
+                  'memo': item.memo
+                }),
+        _oldPasswordDeletionAdapter = DeletionAdapter(
+            database,
+            'OldPassword',
+            ['id'],
+            (OldPassword item) => <String, Object?>{
+                  'id': item.id,
+                  'accountId': item.accountId,
+                  'password': item.password,
+                  'beginTime': item.beginTime,
+                  'memo': item.memo
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<OldPassword> _oldPasswordInsertionAdapter;
+
+  final DeletionAdapter<OldPassword> _oldPasswordDeletionAdapter;
+
+  @override
+  Future<List<OldPassword>> findByAccountId(int accountId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM OldPassword WHERE accountId = ?1 ORDER BY beginTime DESC',
+        mapper: (Map<String, Object?> row) => OldPassword(row['id'] as int?, row['accountId'] as int, row['password'] as String, row['beginTime'] as String, row['memo'] as String),
+        arguments: [accountId]);
+  }
+
+  @override
+  Future<int> add(OldPassword oldPassword) {
+    return _oldPasswordInsertionAdapter.insertAndReturnId(
+        oldPassword, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<int> deleteByEntity(OldPassword oldPassword) {
+    return _oldPasswordDeletionAdapter.deleteAndReturnChangedRows(oldPassword);
   }
 }

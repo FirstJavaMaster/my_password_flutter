@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
+import 'package:my_password_flutter/entity/old_password.dart';
 import 'package:my_password_flutter/page/account/account.dart';
 
 class BaseInfo extends StatefulWidget {
@@ -80,10 +81,13 @@ class BaseInfoState extends State<BaseInfo> {
                           account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
                           account.update_time = DateTime.now().toString();
                           db.accountDao.add(account).then((id) {
+                            // 更新数据
                             this.id = id;
                             this.account.id = id;
                             _dataChangedSC.sink.add(false);
                             Fluttertoast.showToast(msg: '保存成功');
+                            // 更新历史密码
+                            _recordOldPassword(account);
                             // 通知父组件
                             IdChangeNotification(id).dispatch(context);
                           });
@@ -236,5 +240,16 @@ class BaseInfoState extends State<BaseInfo> {
         );
       },
     ).then((value) => value ? Navigator.of(context).pop(true) : null);
+  }
+
+  void _recordOldPassword(Account account) {
+    DatabaseUtils.getDatabase().then((db) {
+      db.oldPasswordDao.findByAccountId(id).then((oldPasswordList) {
+        if (oldPasswordList.isNotEmpty && oldPasswordList[0].password == account.password) {
+          return;
+        }
+        db.oldPasswordDao.add(OldPassword(null, id, account.password, DateTime.now().toString(), ''));
+      });
+    });
   }
 }
