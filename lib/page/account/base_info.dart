@@ -57,13 +57,12 @@ class BaseInfoState extends State<BaseInfo> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
       child: Column(
         children: [
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: _buildForm(),
-            ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: _buildForm(),
           ),
           StreamBuilder<bool>(
             stream: _dataChangedSC.stream,
@@ -117,9 +116,6 @@ class BaseInfoState extends State<BaseInfo> {
               style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
               onPressed: id == 0 ? null : () => _deleteAccount(),
             ),
-          ),
-          SizedBox(
-            height: 20,
           )
         ],
       ),
@@ -204,11 +200,12 @@ class BaseInfoState extends State<BaseInfo> {
   }
 
   _buildButton(Widget btnWidget) {
-    return Padding(
-      padding: EdgeInsets.only(left: 10, right: 10),
-      child: Row(
-        children: [Expanded(child: btnWidget)],
-      ),
+    return Row(
+      children: [
+        Expanded(
+          child: btnWidget,
+        )
+      ],
     );
   }
 
