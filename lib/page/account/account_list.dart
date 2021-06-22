@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/page/account/account.dart';
+import 'package:my_password_flutter/page/account/main_drawer.dart';
 
 class AccountListPage extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class AccountListPageState extends State<AccountListPage> {
       appBar: new AppBar(
         title: new Text('My Password'),
       ),
+      drawer: MainDrawer(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

@@ -20,6 +20,20 @@ class Account {
     return account;
   }
 
+  static Account fromMap(Map<String, dynamic> map) {
+    return Account(
+      map["id"] ?? '',
+      map["siteName"] ?? '',
+      map["sitePinYinName"] ?? '',
+      map["userName"] ?? '',
+      map["password"] ?? '',
+      map["remarks"] ?? '',
+      map["createTime"] ?? '',
+      map["updateTime"] ?? '',
+      map["memo"] ?? '',
+    );
+  }
+
   @override
   String toString() {
     return 'Account{id: $id, site_name: $site_name, site_pin_yin_name: $site_pin_yin_name, user_name: $user_name, password: $password, remarks: $remarks, create_time: $create_time, update_time: $update_time, memo: $memo}';

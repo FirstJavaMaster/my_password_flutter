@@ -1,7 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lpinyin/lpinyin.dart';
+import 'package:my_password_flutter/utils/json_utils.dart';
 
 void main() {
+  test('test csv read', () {
+    File file = new File('F:/tmp/account.json');
+    var content = file.readAsStringSync();
+    var accountList = JsonUtils.jsonToAccountList(content);
+
+    print(accountList);
+  });
+
   test('test pinyin', () {
     String s = '测试中文';
     String s0 = '奇偶';
