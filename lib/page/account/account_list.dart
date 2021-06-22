@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +9,7 @@ import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/page/account/account.dart';
 import 'package:my_password_flutter/page/account/main_drawer.dart';
 import 'package:my_password_flutter/utils/constants.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class AccountListPage extends StatefulWidget {
   @override
@@ -21,6 +24,9 @@ class AccountListPageState extends State<AccountListPage> {
 
   // 账户索引列表
   List<String> accountIndexList = [];
+
+  // 滚动控制器
+  final ItemScrollController _itemScrollController = ItemScrollController();
 
   @override
   void initState() {
@@ -38,7 +44,10 @@ class AccountListPageState extends State<AccountListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _getAccountList());
+          // Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _getAccountList());
+          var nextInt = Random().nextInt(this.accountIndexList.length - 1);
+          Fluttertoast.showToast(msg: "下一个索引: " + this.accountIndexList[nextInt]);
+          _itemScrollController.scrollTo(index: nextInt, duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
         },
       ),
       body: RefreshIndicator(
@@ -67,7 +76,8 @@ class AccountListPageState extends State<AccountListPage> {
   }
 
   Widget _buildPart() {
-    return ListView.separated(
+    return ScrollablePositionedList.builder(
+      itemCount: this.accountIndexList.length + 1,
       itemBuilder: (context, index) {
         // 最后一个列表项
         if (index == accountIndexList.length) {
@@ -90,15 +100,13 @@ class AccountListPageState extends State<AccountListPage> {
               child: Text(
                 accountIndex,
                 textScaleFactor: 1.2,
-                // style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             _buildRowList(accountIndex),
           ],
         );
       },
-      separatorBuilder: (context, index) => Divider(height: 1),
-      itemCount: this.accountIndexList.length + 1,
+      itemScrollController: _itemScrollController,
     );
   }
 
