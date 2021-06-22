@@ -1,4 +1,5 @@
 import 'package:floor/floor.dart';
+import 'package:my_password_flutter/utils/constants.dart';
 
 @entity
 class Account {
@@ -37,5 +38,11 @@ class Account {
   @override
   String toString() {
     return 'Account{id: $id, site_name: $site_name, site_pin_yin_name: $site_pin_yin_name, user_name: $user_name, password: $password, remarks: $remarks, create_time: $create_time, update_time: $update_time, memo: $memo}';
+  }
+
+  String getTagChar() {
+    var firstChar = this.site_pin_yin_name.isEmpty ? Constants.keywordNo : this.site_pin_yin_name.substring(0, 1);
+    var firstCharUpperCase = firstChar.toUpperCase();
+    return Constants.keywordList.contains(firstCharUpperCase) ? firstCharUpperCase : Constants.keywordNo;
   }
 }
