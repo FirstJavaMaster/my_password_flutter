@@ -111,8 +111,4 @@ class AccountListPageState extends State<AccountListPage> {
       separatorBuilder: (context, index) => Divider(height: 1),
     );
   }
-
-  void _dealRouterReturn(value) {
-    _getAccountList();
-  }
 }
