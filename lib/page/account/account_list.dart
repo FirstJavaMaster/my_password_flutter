@@ -29,11 +29,11 @@ class AccountListPageState extends State<AccountListPage> {
       appBar: new AppBar(
         title: new Text('My Password'),
       ),
-      drawer: MainDrawer(),
+      drawer: MainDrawer((closeResult) => _getAccountList()),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _dealRouterReturn(value));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _getAccountList());
         },
       ),
       body: RefreshIndicator(
@@ -103,7 +103,7 @@ class AccountListPageState extends State<AccountListPage> {
           trailing: IconButton(
             icon: Icon(Icons.chevron_right),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _dealRouterReturn(value));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _getAccountList());
             },
           ),
         );

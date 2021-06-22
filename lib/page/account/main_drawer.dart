@@ -8,6 +8,10 @@ import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/utils/json_utils.dart';
 
 class MainDrawer extends StatelessWidget {
+  final ValueChanged<bool> closeResult;
+
+  MainDrawer(this.closeResult);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -50,6 +54,7 @@ class MainDrawer extends StatelessWidget {
                           Navigator.of(context).pop(true);
                           importFile(mainContext).then((value) {
                             print("导入结束: " + value.toString());
+                            closeResult(true);
                             Navigator.of(mainContext).pop();
                           });
                         },
