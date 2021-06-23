@@ -141,10 +141,14 @@ class AccountListPageState extends State<AccountListPage> {
 
   _buildSubtitle(String content) {
     return InkWell(
-      child: Text(
-        content,
-        textScaleFactor: 1.2,
-        style: TextStyle(height: 1.5),
+      child: LimitedBox(
+        maxWidth: MediaQuery.of(context).size.width / 2 - 30,
+        child: Text(
+          content,
+          textScaleFactor: 1.2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(height: 1.5),
+        ),
       ),
       onTap: () {
         Clipboard.setData(ClipboardData(text: content)).then((value) => Fluttertoast.showToast(msg: '[$content] 已复制到剪切板'));
