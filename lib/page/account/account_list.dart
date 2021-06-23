@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,20 +39,25 @@ class AccountListPageState extends State<AccountListPage> {
         title: new Text('My Password'),
       ),
       drawer: MainDrawer((closeResult) => _getAccountList()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          // Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _getAccountList());
-          var nextInt = Random().nextInt(this.accountIndexList.length - 1);
-          Fluttertoast.showToast(msg: "下一个索引: " + this.accountIndexList[nextInt]);
-          _itemScrollController.scrollTo(index: nextInt, duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(0))).then((value) => _getAccountList());
         },
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          _getAccountList();
-        },
-        child: _buildPart(),
+        onRefresh: () async => _getAccountList(),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            _buildPart(),
+            Positioned(
+              right: 10,
+              child: _buildIndexBar(),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -81,12 +84,7 @@ class AccountListPageState extends State<AccountListPage> {
       itemBuilder: (context, index) {
         // 最后一个列表项
         if (index == accountIndexList.length) {
-          return SizedBox(
-            height: 150,
-            child: Center(
-              child: Text('没有更多了 (＞﹏＜)'),
-            ),
-          );
+          return _buildTailMemo();
         }
 
         var accountIndex = this.accountIndexList[index];
@@ -124,12 +122,9 @@ class AccountListPageState extends State<AccountListPage> {
                 _buildSubtitle(account.password),
               ],
             ),
-            trailing: IconButton(
-              icon: Icon(Icons.chevron_right),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _getAccountList());
-              },
-            ),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage(account.id ?? 0))).then((value) => _getAccountList());
+            },
           );
         }).toList();
 
@@ -154,6 +149,37 @@ class AccountListPageState extends State<AccountListPage> {
       onTap: () {
         Clipboard.setData(ClipboardData(text: content)).then((value) => Fluttertoast.showToast(msg: '[$content] 已复制到剪切板'));
       },
+    );
+  }
+
+  Widget _buildIndexBar() {
+    return Card(
+      child: Column(
+        children: () {
+          return this.accountIndexList.map((index) {
+            return InkWell(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                child: Text(index),
+              ),
+              onTap: () {
+                Fluttertoast.showToast(msg: '选择 $index', gravity: ToastGravity.CENTER, fontSize: 16);
+                var indexOfIndex = this.accountIndexList.indexOf(index);
+                _itemScrollController.scrollTo(index: indexOfIndex, duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+              },
+            );
+          }).toList();
+        }(),
+      ),
+    );
+  }
+
+  Widget _buildTailMemo() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 40, 0, 100),
+      child: Center(
+        child: Text('没有更多了 (＞﹏＜)'),
+      ),
     );
   }
 }
