@@ -63,19 +63,19 @@ class AccountListPageState extends State<AccountListPage> {
   }
 
   // 查询列表
-  void _getAccountList() {
-    DatabaseUtils.getDatabase().then((db) => {
-          db.accountDao.findAll().then((accountList) => {
-                setState(() {
-                  this.accountList = accountList;
-                  var indexOfFirstCharSet = accountList.map((e) {
-                    var indexOfFirstChar = Constants.keywordList.indexOf(e.getTagChar());
-                    return indexOfFirstChar < 0 ? 0 : indexOfFirstChar;
-                  }).toSet();
-                  this.accountIndexList = Constants.keywordList.where((e) => indexOfFirstCharSet.contains(Constants.keywordList.indexOf(e))).toList();
-                })
-              })
-        });
+  void _getAccountList() async {
+    var db = await DatabaseUtils.getDatabase();
+    var accountList = await db.accountDao.findAll();
+    setState(() {
+      this.accountList = accountList;
+      var indexOfFirstCharSet = accountList.map((e) {
+        var indexOfFirstChar = Constants.keywordList.indexOf(e.getTagChar());
+        return indexOfFirstChar < 0 ? 0 : indexOfFirstChar;
+      }).toSet();
+      this.accountIndexList = Constants.keywordList.where((e) => indexOfFirstCharSet.contains(Constants.keywordList.indexOf(e))).toList();
+    });
+    await Future.delayed(Duration(seconds: 1));
+    Fluttertoast.showToast(msg: '刷新成功', gravity: ToastGravity.CENTER);
   }
 
   Widget _buildPart() {
