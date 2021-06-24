@@ -6,6 +6,9 @@ abstract class AccountDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> add(Account account);
 
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> addList(List<Account> account);
+
   @Query('SELECT * FROM Account')
   Future<List<Account>> findAll();
 

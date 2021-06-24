@@ -38,7 +38,7 @@ class AccountListPageState extends State<AccountListPage> {
       appBar: new AppBar(
         title: new Text('My Password'),
       ),
-      drawer: MainDrawer((closeResult) => _getAccountList()),
+      drawer: MainDrawer((dataChanged) => _getAccountList()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -47,7 +47,7 @@ class AccountListPageState extends State<AccountListPage> {
         },
       ),
       body: RefreshIndicator(
-        onRefresh: () async => _getAccountList(),
+        onRefresh: () async => _getAccountList(showToast: true),
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -63,7 +63,7 @@ class AccountListPageState extends State<AccountListPage> {
   }
 
   // 查询列表
-  void _getAccountList() async {
+  void _getAccountList({bool showToast = false}) async {
     var db = await DatabaseUtils.getDatabase();
     var accountList = await db.accountDao.findAll();
     setState(() {
@@ -74,8 +74,10 @@ class AccountListPageState extends State<AccountListPage> {
       }).toSet();
       this.accountIndexList = Constants.keywordList.where((e) => indexOfFirstCharSet.contains(Constants.keywordList.indexOf(e))).toList();
     });
-    await Future.delayed(Duration(seconds: 1));
-    Fluttertoast.showToast(msg: '刷新成功', gravity: ToastGravity.CENTER);
+    await Future.delayed(Duration(milliseconds: 500));
+    if (showToast) {
+      Fluttertoast.showToast(msg: '已刷新', gravity: ToastGravity.CENTER);
+    }
   }
 
   Widget _buildPart() {

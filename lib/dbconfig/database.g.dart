@@ -196,6 +196,12 @@ class _$AccountDao extends AccountDao {
   }
 
   @override
+  Future<void> addList(List<Account> account) async {
+    await _accountInsertionAdapter.insertList(
+        account, OnConflictStrategy.replace);
+  }
+
+  @override
   Future<int> deleteByEntity(Account account) {
     return _accountDeletionAdapter.deleteAndReturnChangedRows(account);
   }

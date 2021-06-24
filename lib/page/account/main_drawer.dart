@@ -6,14 +6,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/utils/json_utils.dart';
+import 'package:my_password_flutter/utils/path_utils.dart';
 
 class MainDrawer extends StatelessWidget {
-  final ValueChanged<bool> closeResult;
+  // 改变这个值则会触发主页面的动作
+  final ValueChanged<bool> dataChanged;
 
-  MainDrawer(this.closeResult);
+  MainDrawer(this.dataChanged);
 
   @override
   Widget build(BuildContext context) {
+    var mainContext = context;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -36,7 +39,6 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.playlist_add),
             title: Text('导入数据'),
             onTap: () {
-              var mainContext = context;
               showDialog<bool>(
                 context: context,
                 builder: (context) {
@@ -46,16 +48,17 @@ class MainDrawer extends StatelessWidget {
                     actions: <Widget>[
                       TextButton(
                         child: Text("取消"),
-                        onPressed: () => Navigator.of(context).pop(), // 关闭对话框
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                       TextButton(
                         child: Text("导入"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
-                          importFile(mainContext).then((value) {
-                            print("导入结束: " + value.toString());
-                            closeResult(true);
-                            Navigator.of(mainContext).pop();
+                          importFile(mainContext).then((result) {
+                            if (result) {
+                              dataChanged(true);
+                              Navigator.of(mainContext).pop();
+                            }
                           });
                         },
                       ),
@@ -69,8 +72,11 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.upload_file),
             title: Text('导出数据'),
             onTap: () {
-              Fluttertoast.showToast(msg: 'msg');
-              Navigator.pop(context);
+              exportFile(mainContext).then((value) {
+                if (value) {
+                  Navigator.pop(mainContext);
+                }
+              });
             },
           ),
         ],
@@ -88,7 +94,6 @@ class MainDrawer extends StatelessWidget {
       Fluttertoast.showToast(msg: '所选文件路径错误: $filePath');
       return false;
     }
-    // await Future.delayed(Duration(seconds: 5));
     // 展示对话框
     BuildContext? dialogContext;
     showDialog(
@@ -111,21 +116,31 @@ class MainDrawer extends StatelessWidget {
       },
     );
     // 执行导入
-    var file = new File(filePath);
-    var content = await file.readAsString();
+    var content = await File(filePath).readAsString();
     List<Account> accountList = JsonUtils.jsonToAccountList(content);
-    DatabaseUtils.getDatabase().then((db) {
-      accountList.forEach((account) {
-        db.accountDao.add(account);
-      });
-    });
+    var db = await DatabaseUtils.getDatabase();
+    db.accountDao.addList(accountList);
 
-    print(accountList.length);
-    return Future.delayed(Duration(seconds: 3), () {
-      if (dialogContext != null) {
-        Navigator.pop(dialogContext!);
-      }
-      return true;
-    });
+    await Future.delayed(Duration(seconds: 1));
+    if (dialogContext != null) {
+      Navigator.pop(dialogContext!);
+    }
+    Fluttertoast.showToast(msg: '导入成功', gravity: ToastGravity.CENTER);
+    return true;
+  }
+
+  Future<bool> exportFile(BuildContext mainContext) async {
+    var path = await PathUtils.getExportPath() + 'account.txt';
+    var db = await DatabaseUtils.getDatabase();
+    var accountList = await db.accountDao.findAll();
+    var jsonStr = JsonUtils.accountListToJson(accountList);
+
+    var file = File(path);
+    if (!file.existsSync()) {
+      file.createSync(recursive: true);
+    }
+    file.writeAsString(jsonStr);
+    Fluttertoast.showToast(msg: '导出成功');
+    return true;
   }
 }
