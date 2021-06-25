@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/utils/json_utils.dart';
-import 'package:my_password_flutter/utils/path_utils.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -127,12 +127,12 @@ class MainDrawer extends StatelessWidget {
   }
 
   void exportFile(BuildContext mainContext) async {
-    var path = await PathUtils.getExportPath() + 'account.txt';
     var db = await DatabaseUtils.getDatabase();
     var accountList = await db.accountDao.findAll();
     var jsonStr = JsonUtils.accountListToJson(accountList);
 
-    var file = File(path);
+    var exportFilePath = await getExportFilePath();
+    var file = File(exportFilePath);
     if (!file.existsSync()) {
       file.createSync(recursive: true);
     }
@@ -155,12 +155,21 @@ class MainDrawer extends StatelessWidget {
               child: Text("导出"),
               onPressed: () {
                 Navigator.of(context).pop(true);
-                Share.shareFiles([path]);
+                Share.shareFiles([exportFilePath]);
               },
             ),
           ],
         );
       },
     );
+  }
+
+  // 根据当前时间, 返回导出文件的绝对路径
+  Future<String> getExportFilePath() async {
+    var docPath = (await getApplicationDocumentsDirectory()).path;
+
+    var now = DateTime.now();
+    String filename = 'my-password-backup.${now.year}${now.month}${now.day}.${now.hour}-${now.minute}-${now.second}.json';
+    return docPath + '/export/' + filename;
   }
 }
