@@ -7,6 +7,7 @@ import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/utils/json_utils.dart';
 import 'package:my_password_flutter/utils/path_utils.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MainDrawer extends StatelessWidget {
   // 改变这个值则会触发主页面的动作
@@ -69,14 +70,10 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.upload_file),
+            leading: Icon(Icons.share),
             title: Text('导出数据'),
             onTap: () {
-              exportFile(mainContext).then((value) {
-                if (value) {
-                  Navigator.pop(mainContext);
-                }
-              });
+              exportFile(mainContext);
             },
           ),
         ],
@@ -84,7 +81,7 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
-  Future<bool> importFile(BuildContext context) async {
+  Future<bool> importFile(BuildContext mainContext) async {
     var filePickerResult = await FilePicker.platform.pickFiles();
     if (filePickerResult == null) {
       return false;
@@ -97,7 +94,7 @@ class MainDrawer extends StatelessWidget {
     // 展示对话框
     BuildContext? dialogContext;
     showDialog(
-      context: context,
+      context: mainContext,
       barrierDismissible: false, //点击遮罩不关闭对话框
       builder: (context) {
         dialogContext = context;
@@ -129,7 +126,7 @@ class MainDrawer extends StatelessWidget {
     return true;
   }
 
-  Future<bool> exportFile(BuildContext mainContext) async {
+  void exportFile(BuildContext mainContext) async {
     var path = await PathUtils.getExportPath() + 'account.txt';
     var db = await DatabaseUtils.getDatabase();
     var accountList = await db.accountDao.findAll();
@@ -140,7 +137,30 @@ class MainDrawer extends StatelessWidget {
       file.createSync(recursive: true);
     }
     file.writeAsString(jsonStr);
-    Fluttertoast.showToast(msg: '导出成功');
-    return true;
+    print(1);
+
+    // 提示用户
+    showDialog<bool>(
+      context: mainContext,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("提示"),
+          content: Text("为保证数据安全, 导出文件不会放在SD卡内, 建议分享至其他平台进行备份, 如私人邮箱/QQ/微信/云存储等"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("取消"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text("导出"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                Share.shareFiles([path]);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lpinyin/lpinyin.dart';
@@ -97,20 +96,6 @@ class BaseInfoState extends State<BaseInfo> {
             },
           ),
           _buildButton(
-            ElevatedButton(
-              child: Text('+ +'),
-              onPressed: () {
-                var account = Account(null, getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), getRandomWords(), DateTime.now().toString(),
-                    DateTime.now().toString(), getRandomWords());
-                DatabaseUtils.getDatabase().then((db) {
-                  db.accountDao.add(account).then((id) {
-                    Navigator.of(context).pop(true);
-                  });
-                });
-              },
-            ),
-          ),
-          _buildButton(
             OutlinedButton(
               child: Text('删 除'),
               style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
@@ -193,10 +178,6 @@ class BaseInfoState extends State<BaseInfo> {
             ),
           ],
         ));
-  }
-
-  String getRandomWords() {
-    return new WordPair.random().first;
   }
 
   _buildButton(Widget btnWidget) {
