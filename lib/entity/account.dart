@@ -5,16 +5,16 @@ import 'package:my_password_flutter/utils/constants.dart';
 class Account {
   @PrimaryKey(autoGenerate: true)
   int? id;
-  String site_name = '';
-  String site_pin_yin_name = '';
-  String user_name = '';
+  String siteName = '';
+  String sitePinYinName = '';
+  String userName = '';
   String password = '';
   String remarks = '';
-  String create_time = '';
-  String update_time = '';
+  String createTime = '';
+  String updateTime = '';
   String memo = '';
 
-  Account(this.id, this.site_name, this.site_pin_yin_name, this.user_name, this.password, this.remarks, this.create_time, this.update_time, this.memo);
+  Account(this.id, this.siteName, this.sitePinYinName, this.userName, this.password, this.remarks, this.createTime, this.updateTime, this.memo);
 
   static Account ofEmpty() {
     Account account = Account(null, '', '', '', '', '', '', '', '');
@@ -22,36 +22,36 @@ class Account {
   }
 
   String getTagChar() {
-    var firstChar = this.site_pin_yin_name.isEmpty ? Constants.keywordNo : this.site_pin_yin_name.substring(0, 1);
+    var firstChar = this.sitePinYinName.isEmpty ? Constants.keywordNo : this.sitePinYinName.substring(0, 1);
     var firstCharUpperCase = firstChar.toUpperCase();
     return Constants.keywordList.contains(firstCharUpperCase) ? firstCharUpperCase : Constants.keywordNo;
   }
 
   Account.fromJson(Map<String, dynamic> map)
       : id = map["id"] ?? '',
-        site_name = map["siteName"] ?? '',
-        site_pin_yin_name = map["sitePinYinName"] ?? '',
-        user_name = map["userName"] ?? '',
+        siteName = map["siteName"] ?? '',
+        sitePinYinName = map["sitePinYinName"] ?? '',
+        userName = map["userName"] ?? '',
         password = map["password"] ?? '',
         remarks = map["remarks"] ?? '',
-        create_time = map["createTime"] ?? '',
-        update_time = map["updateTime"] ?? '',
+        createTime = map["createTime"] ?? '',
+        updateTime = map["updateTime"] ?? '',
         memo = map["memo"] ?? '';
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "siteName": site_name,
-        "sitePinYinName": site_pin_yin_name,
-        "userName": user_name,
+        "siteName": siteName,
+        "sitePinYinName": sitePinYinName,
+        "userName": userName,
         "password": password,
         "remarks": remarks,
-        "createTime": create_time,
-        "updateTime": update_time,
+        "createTime": createTime,
+        "updateTime": updateTime,
         "memo": memo
       };
 
   @override
   String toString() {
-    return 'Account{id: $id, site_name: $site_name, site_pin_yin_name: $site_pin_yin_name, user_name: $user_name, password: $password, remarks: $remarks, create_time: $create_time, update_time: $update_time, memo: $memo}';
+    return 'Account{id: $id, siteName: $siteName, sitePinYinName: $sitePinYinName, userName: $userName, password: $password, remarks: $remarks, createTime: $createTime, updateTime: $updateTime, memo: $memo}';
   }
 }

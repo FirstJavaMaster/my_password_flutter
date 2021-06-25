@@ -6,7 +6,7 @@ abstract class AccountRelationDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> add(AccountRelation accountRelation);
 
-  @Query('SELECT * FROM AccountRelation WHERE source_id = :sourceId')
+  @Query('SELECT * FROM AccountRelation WHERE sourceId = :sourceId')
   Future<List<AccountRelation>> findListBySourceId(int sourceId);
 
   @Query('SELECT * FROM AccountRelation WHERE id = :id')
@@ -15,6 +15,6 @@ abstract class AccountRelationDao {
   @delete
   Future<int> deleteByEntity(AccountRelation accountRelation);
 
-  @Query('DELETE FROM AccountRelation WHERE source_id = :accountId or target_id = :accountId')
+  @Query('DELETE FROM AccountRelation WHERE sourceId = :accountId or targetId = :accountId')
   Future<void> deleteByAccountId(int accountId);
 }

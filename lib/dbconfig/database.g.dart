@@ -85,9 +85,9 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `site_name` TEXT NOT NULL, `site_pin_yin_name` TEXT NOT NULL, `user_name` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `create_time` TEXT NOT NULL, `update_time` TEXT NOT NULL, `memo` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `siteName` TEXT NOT NULL, `sitePinYinName` TEXT NOT NULL, `userName` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `createTime` TEXT NOT NULL, `updateTime` TEXT NOT NULL, `memo` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `AccountRelation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `source_id` INTEGER NOT NULL, `target_id` INTEGER NOT NULL, `memo` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `AccountRelation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `sourceId` INTEGER NOT NULL, `targetId` INTEGER NOT NULL, `memo` TEXT NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `OldPassword` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `accountId` INTEGER NOT NULL, `password` TEXT NOT NULL, `beginTime` TEXT NOT NULL, `memo` TEXT NOT NULL)');
 
@@ -123,13 +123,13 @@ class _$AccountDao extends AccountDao {
             'Account',
             (Account item) => <String, Object?>{
                   'id': item.id,
-                  'site_name': item.site_name,
-                  'site_pin_yin_name': item.site_pin_yin_name,
-                  'user_name': item.user_name,
+                  'siteName': item.siteName,
+                  'sitePinYinName': item.sitePinYinName,
+                  'userName': item.userName,
                   'password': item.password,
                   'remarks': item.remarks,
-                  'create_time': item.create_time,
-                  'update_time': item.update_time,
+                  'createTime': item.createTime,
+                  'updateTime': item.updateTime,
                   'memo': item.memo
                 }),
         _accountDeletionAdapter = DeletionAdapter(
@@ -138,13 +138,13 @@ class _$AccountDao extends AccountDao {
             ['id'],
             (Account item) => <String, Object?>{
                   'id': item.id,
-                  'site_name': item.site_name,
-                  'site_pin_yin_name': item.site_pin_yin_name,
-                  'user_name': item.user_name,
+                  'siteName': item.siteName,
+                  'sitePinYinName': item.sitePinYinName,
+                  'userName': item.userName,
                   'password': item.password,
                   'remarks': item.remarks,
-                  'create_time': item.create_time,
-                  'update_time': item.update_time,
+                  'createTime': item.createTime,
+                  'updateTime': item.updateTime,
                   'memo': item.memo
                 });
 
@@ -163,13 +163,13 @@ class _$AccountDao extends AccountDao {
     return _queryAdapter.queryList('SELECT * FROM Account',
         mapper: (Map<String, Object?> row) => Account(
             row['id'] as int?,
-            row['site_name'] as String,
-            row['site_pin_yin_name'] as String,
-            row['user_name'] as String,
+            row['siteName'] as String,
+            row['sitePinYinName'] as String,
+            row['userName'] as String,
             row['password'] as String,
             row['remarks'] as String,
-            row['create_time'] as String,
-            row['update_time'] as String,
+            row['createTime'] as String,
+            row['updateTime'] as String,
             row['memo'] as String));
   }
 
@@ -178,13 +178,13 @@ class _$AccountDao extends AccountDao {
     return _queryAdapter.query('SELECT * FROM Account WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Account(
             row['id'] as int?,
-            row['site_name'] as String,
-            row['site_pin_yin_name'] as String,
-            row['user_name'] as String,
+            row['siteName'] as String,
+            row['sitePinYinName'] as String,
+            row['userName'] as String,
             row['password'] as String,
             row['remarks'] as String,
-            row['create_time'] as String,
-            row['update_time'] as String,
+            row['createTime'] as String,
+            row['updateTime'] as String,
             row['memo'] as String),
         arguments: [id]);
   }
@@ -215,8 +215,8 @@ class _$AccountRelationDao extends AccountRelationDao {
             'AccountRelation',
             (AccountRelation item) => <String, Object?>{
                   'id': item.id,
-                  'source_id': item.source_id,
-                  'target_id': item.target_id,
+                  'sourceId': item.sourceId,
+                  'targetId': item.targetId,
                   'memo': item.memo
                 }),
         _accountRelationDeletionAdapter = DeletionAdapter(
@@ -225,8 +225,8 @@ class _$AccountRelationDao extends AccountRelationDao {
             ['id'],
             (AccountRelation item) => <String, Object?>{
                   'id': item.id,
-                  'source_id': item.source_id,
-                  'target_id': item.target_id,
+                  'sourceId': item.sourceId,
+                  'targetId': item.targetId,
                   'memo': item.memo
                 });
 
@@ -243,11 +243,11 @@ class _$AccountRelationDao extends AccountRelationDao {
   @override
   Future<List<AccountRelation>> findListBySourceId(int sourceId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM AccountRelation WHERE source_id = ?1',
+        'SELECT * FROM AccountRelation WHERE sourceId = ?1',
         mapper: (Map<String, Object?> row) => AccountRelation(
             row['id'] as int?,
-            row['source_id'] as int,
-            row['target_id'] as int,
+            row['sourceId'] as int,
+            row['targetId'] as int,
             row['memo'] as String),
         arguments: [sourceId]);
   }
@@ -257,8 +257,8 @@ class _$AccountRelationDao extends AccountRelationDao {
     return _queryAdapter.query('SELECT * FROM AccountRelation WHERE id = ?1',
         mapper: (Map<String, Object?> row) => AccountRelation(
             row['id'] as int?,
-            row['source_id'] as int,
-            row['target_id'] as int,
+            row['sourceId'] as int,
+            row['targetId'] as int,
             row['memo'] as String),
         arguments: [id]);
   }
@@ -266,7 +266,7 @@ class _$AccountRelationDao extends AccountRelationDao {
   @override
   Future<void> deleteByAccountId(int accountId) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM AccountRelation WHERE source_id = ?1 or target_id = ?1',
+        'DELETE FROM AccountRelation WHERE sourceId = ?1 or targetId = ?1',
         arguments: [accountId]);
   }
 

@@ -61,12 +61,12 @@ class RelationListState extends State<RelationList> {
               children: () {
                 List<Widget> rowList = [];
                 this.relationList.forEach((relation) {
-                  var targetAccount = accountList.firstWhere((account) => account.id == relation.target_id);
+                  var targetAccount = accountList.firstWhere((account) => account.id == relation.targetId);
                   var row = Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        targetAccount.site_name + ' - ' + targetAccount.user_name,
+                        targetAccount.siteName + ' - ' + targetAccount.userName,
                         textScaleFactor: 1.2,
                       ),
                       TextButton(
@@ -125,7 +125,7 @@ class RelationListState extends State<RelationList> {
                             itemBuilder: (BuildContext context, int index) {
                               var account = accountListFilter[index];
                               return ListTile(
-                                title: Text(account.site_name + ' - ' + account.user_name),
+                                title: Text(account.siteName + ' - ' + account.userName),
                                 onTap: () => Navigator.of(context).pop(account.id),
                               );
                             },
@@ -157,7 +157,7 @@ class RelationListState extends State<RelationList> {
 
   // 过滤account列表
   void _filterAccountList() {
-    var excludeIdSet = relationList.map((e) => e.target_id).toSet();
+    var excludeIdSet = relationList.map((e) => e.targetId).toSet();
     excludeIdSet.add(sourceId);
 
     var accountListFilter = accountList.where((account) {
@@ -167,7 +167,7 @@ class RelationListState extends State<RelationList> {
       if (keyword.isEmpty) {
         return true;
       }
-      var filterField = account.site_name;
+      var filterField = account.siteName;
       if (keyword == Constants.keywordNo) {
         return RegExp(r'[0-9]').hasMatch(filterField);
       } else {

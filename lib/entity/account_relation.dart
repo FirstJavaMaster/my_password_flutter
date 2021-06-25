@@ -4,14 +4,14 @@ import 'package:floor/floor.dart';
 class AccountRelation {
   @PrimaryKey(autoGenerate: true)
   int? id;
-  final int source_id;
-  final int target_id;
+  final int sourceId;
+  final int targetId;
   String memo = '';
 
-  AccountRelation(this.id, this.source_id, this.target_id, this.memo);
+  AccountRelation(this.id, this.sourceId, this.targetId, this.memo);
 
   @override
   String toString() {
-    return 'AccountRelation{id: $id, source_id: $source_id, target_id: $target_id, memo: $memo}';
+    return 'AccountRelation{id: $id, sourceId: $sourceId, targetId: $targetId, memo: $memo}';
   }
 }

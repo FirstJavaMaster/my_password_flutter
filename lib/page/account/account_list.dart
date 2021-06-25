@@ -116,10 +116,10 @@ class AccountListPageState extends State<AccountListPage> {
       children: () {
         List<Widget> rowList = accountListCurrent.map((account) {
           return ListTile(
-            title: new Text(account.site_name),
+            title: new Text(account.siteName),
             subtitle: Row(
               children: [
-                _buildSubtitle(account.user_name),
+                _buildSubtitle(account.userName),
                 Text(' - '),
                 _buildSubtitle(account.password),
               ],

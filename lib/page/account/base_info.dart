@@ -76,8 +76,8 @@ class BaseInfoState extends State<BaseInfo> {
                           return;
                         }
                         DatabaseUtils.getDatabase().then((db) {
-                          account.site_pin_yin_name = PinyinHelper.getPinyinE(account.site_name);
-                          account.update_time = DateTime.now().toString();
+                          account.sitePinYinName = PinyinHelper.getPinyinE(account.siteName);
+                          account.updateTime = DateTime.now().toString();
                           db.accountDao.add(account).then((id) {
                             // 更新数据
                             this.id = id;
@@ -114,12 +114,12 @@ class BaseInfoState extends State<BaseInfo> {
           children: [
             TextFormField(
               decoration: InputDecoration(labelText: '网站名称', border: OutlineInputBorder()),
-              controller: TextEditingController(text: this.account.site_name),
+              controller: TextEditingController(text: this.account.siteName),
               onChanged: (value) {
-                if (account.site_name == value) {
+                if (account.siteName == value) {
                   return;
                 }
-                account.site_name = value;
+                account.siteName = value;
                 _dataChangedSC.sink.add(true);
               },
               validator: (value) {
@@ -132,12 +132,12 @@ class BaseInfoState extends State<BaseInfo> {
             SizedBox(height: 10),
             TextFormField(
               decoration: InputDecoration(labelText: '用户名', border: OutlineInputBorder()),
-              controller: TextEditingController(text: this.account.user_name),
+              controller: TextEditingController(text: this.account.userName),
               onChanged: (value) {
-                if (account.user_name == value) {
+                if (account.userName == value) {
                   return;
                 }
-                account.user_name = value;
+                account.userName = value;
                 _dataChangedSC.sink.add(true);
               },
             ),
