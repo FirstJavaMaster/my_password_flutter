@@ -206,7 +206,7 @@ class BaseInfoState extends State<BaseInfo> {
               child: Text('删除', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 DatabaseUtils.getDatabase().then((db) {
-                  db.accountRelationDao.deleteByAccountId(id);
+                  db.accountBindingDao.deleteByAccountId(id);
                   db.accountDao.deleteByEntity(account).then((value) {
                     Fluttertoast.showToast(msg: '删除成功');
                     Navigator.of(context).pop(true);

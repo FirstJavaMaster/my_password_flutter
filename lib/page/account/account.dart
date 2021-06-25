@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_password_flutter/page/account/base_info.dart';
 import 'package:my_password_flutter/page/account/old_password_list.dart';
-import 'package:my_password_flutter/page/account/relation_list.dart';
+import 'package:my_password_flutter/page/account/binding_list.dart';
 
 class AccountPage extends StatefulWidget {
   int id = 0;
@@ -39,7 +39,7 @@ class AccountPageState extends State<AccountPage> {
           child: TabBarView(
             children: [
               BaseInfo(id),
-              RelationList(id),
+              BindingList(id),
               OldPasswordList(id),
             ],
           ),

@@ -1,17 +1,17 @@
 import 'package:floor/floor.dart';
 
 @entity
-class AccountRelation {
+class AccountBinding {
   @PrimaryKey(autoGenerate: true)
   int? id;
   final int sourceId;
   final int targetId;
   String memo = '';
 
-  AccountRelation(this.id, this.sourceId, this.targetId, this.memo);
+  AccountBinding(this.id, this.sourceId, this.targetId, this.memo);
 
   @override
   String toString() {
-    return 'AccountRelation{id: $id, sourceId: $sourceId, targetId: $targetId, memo: $memo}';
+    return 'AccountBinding{id: $id, sourceId: $sourceId, targetId: $targetId, memo: $memo}';
   }
 }

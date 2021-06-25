@@ -2,21 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
-import 'package:my_password_flutter/entity/account_relation.dart';
+import 'package:my_password_flutter/entity/account_binding.dart';
 import 'package:my_password_flutter/utils/constants.dart';
 
-class RelationList extends StatefulWidget {
+class BindingList extends StatefulWidget {
   final int sourceId;
 
-  RelationList(this.sourceId);
+  BindingList(this.sourceId);
 
   @override
   State<StatefulWidget> createState() {
-    return RelationListState(sourceId);
+    return BindingListState(sourceId);
   }
 }
 
-class RelationListState extends State<RelationList> {
+class BindingListState extends State<BindingList> {
   // 当前 account ID
   final int sourceId;
 
@@ -27,13 +27,13 @@ class RelationListState extends State<RelationList> {
   List<Account> accountListFilter = [];
 
   // 已关联的 account 列表
-  List<AccountRelation> relationList = [];
+  List<AccountBinding> relationList = [];
 
   // 选择 account 时的 keyword
   String keyword = '';
 
   // 构造方法
-  RelationListState(this.sourceId);
+  BindingListState(this.sourceId);
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class RelationListState extends State<RelationList> {
       // 先查 account 列表, 再查 relation 列表
       db.accountDao.findAll().then((accountList) {
         this.accountList = accountList;
-        db.accountRelationDao.findListBySourceId(sourceId).then((relationList) {
+        db.accountBindingDao.findListBySourceId(sourceId).then((relationList) {
           setState(() {
             this.relationList = relationList;
           });
@@ -143,9 +143,9 @@ class RelationListState extends State<RelationList> {
         return;
       }
       // 添加关联关系
-      var relation = AccountRelation(null, sourceId, targetId, '');
+      var relation = AccountBinding(null, sourceId, targetId, '');
       DatabaseUtils.getDatabase().then((db) {
-        db.accountRelationDao.add(relation).then((id) {
+        db.accountBindingDao.add(relation).then((id) {
           setState(() {
             relation.id = id;
             relationList.add(relation);
@@ -218,7 +218,7 @@ class RelationListState extends State<RelationList> {
     });
   }
 
-  void _deleteRelation(AccountRelation relation) {
+  void _deleteRelation(AccountBinding relation) {
     showDialog(
       context: context,
       builder: (context) {
@@ -234,7 +234,7 @@ class RelationListState extends State<RelationList> {
               child: Text('删除', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 DatabaseUtils.getDatabase().then((db) {
-                  db.accountRelationDao.deleteByEntity(relation).then((value) {
+                  db.accountBindingDao.deleteByEntity(relation).then((value) {
                     setState(() {
                       relationList = relationList.where((element) => element.id != relation.id).toList();
                       Navigator.of(context).pop(true);
