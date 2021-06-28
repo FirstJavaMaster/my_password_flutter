@@ -62,7 +62,7 @@ class _$AppDatabase extends AppDatabase {
 
   AccountDao? _accountDaoInstance;
 
-  AccountBindingDao? _accountRelationDaoInstance;
+  AccountBindingDao? _accountBindingDaoInstance;
 
   OldPasswordDao? _oldPasswordDaoInstance;
 
@@ -87,7 +87,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `siteName` TEXT NOT NULL, `sitePinYinName` TEXT NOT NULL, `userName` TEXT NOT NULL, `password` TEXT NOT NULL, `remarks` TEXT NOT NULL, `createTime` TEXT NOT NULL, `updateTime` TEXT NOT NULL, `memo` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `AccountRelation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `sourceId` INTEGER NOT NULL, `targetId` INTEGER NOT NULL, `memo` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `AccountBinding` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `sourceId` INTEGER NOT NULL, `targetId` INTEGER NOT NULL, `memo` TEXT NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `OldPassword` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `accountId` INTEGER NOT NULL, `password` TEXT NOT NULL, `beginTime` TEXT NOT NULL, `memo` TEXT NOT NULL)');
 
@@ -104,8 +104,8 @@ class _$AppDatabase extends AppDatabase {
 
   @override
   AccountBindingDao get accountBindingDao {
-    return _accountRelationDaoInstance ??=
-        _$AccountRelationDao(database, changeListener);
+    return _accountBindingDaoInstance ??=
+        _$AccountBindingDao(database, changeListener);
   }
 
   @override
@@ -207,21 +207,21 @@ class _$AccountDao extends AccountDao {
   }
 }
 
-class _$AccountRelationDao extends AccountBindingDao {
-  _$AccountRelationDao(this.database, this.changeListener)
+class _$AccountBindingDao extends AccountBindingDao {
+  _$AccountBindingDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database),
-        _accountRelationInsertionAdapter = InsertionAdapter(
+        _accountBindingInsertionAdapter = InsertionAdapter(
             database,
-            'AccountRelation',
+            'AccountBinding',
             (AccountBinding item) => <String, Object?>{
                   'id': item.id,
                   'sourceId': item.sourceId,
                   'targetId': item.targetId,
                   'memo': item.memo
                 }),
-        _accountRelationDeletionAdapter = DeletionAdapter(
+        _accountBindingDeletionAdapter = DeletionAdapter(
             database,
-            'AccountRelation',
+            'AccountBinding',
             ['id'],
             (AccountBinding item) => <String, Object?>{
                   'id': item.id,
@@ -236,25 +236,13 @@ class _$AccountRelationDao extends AccountBindingDao {
 
   final QueryAdapter _queryAdapter;
 
-  final InsertionAdapter<AccountBinding> _accountRelationInsertionAdapter;
+  final InsertionAdapter<AccountBinding> _accountBindingInsertionAdapter;
 
-  final DeletionAdapter<AccountBinding> _accountRelationDeletionAdapter;
-
-  @override
-  Future<List<AccountBinding>> findListBySourceId(int sourceId) async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM AccountRelation WHERE sourceId = ?1',
-        mapper: (Map<String, Object?> row) => AccountBinding(
-            row['id'] as int?,
-            row['sourceId'] as int,
-            row['targetId'] as int,
-            row['memo'] as String),
-        arguments: [sourceId]);
-  }
+  final DeletionAdapter<AccountBinding> _accountBindingDeletionAdapter;
 
   @override
   Future<AccountBinding?> findById(int id) async {
-    return _queryAdapter.query('SELECT * FROM AccountRelation WHERE id = ?1',
+    return _queryAdapter.query('SELECT * FROM AccountBinding WHERE id = ?1',
         mapper: (Map<String, Object?> row) => AccountBinding(
             row['id'] as int?,
             row['sourceId'] as int,
@@ -264,21 +252,49 @@ class _$AccountRelationDao extends AccountBindingDao {
   }
 
   @override
+  Future<List<AccountBinding>> findListBySourceId(int sourceId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM AccountBinding WHERE sourceId = ?1',
+        mapper: (Map<String, Object?> row) => AccountBinding(
+            row['id'] as int?,
+            row['sourceId'] as int,
+            row['targetId'] as int,
+            row['memo'] as String),
+        arguments: [sourceId]);
+  }
+
+  @override
+  Future<List<AccountBinding>> findAll() async {
+    return _queryAdapter.queryList('SELECT * FROM AccountBinding',
+        mapper: (Map<String, Object?> row) => AccountBinding(
+            row['id'] as int?,
+            row['sourceId'] as int,
+            row['targetId'] as int,
+            row['memo'] as String));
+  }
+
+  @override
   Future<void> deleteByAccountId(int accountId) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM AccountRelation WHERE sourceId = ?1 or targetId = ?1',
+        'DELETE FROM AccountBinding WHERE sourceId = ?1 or targetId = ?1',
         arguments: [accountId]);
   }
 
   @override
   Future<int> add(AccountBinding accountRelation) {
-    return _accountRelationInsertionAdapter.insertAndReturnId(
+    return _accountBindingInsertionAdapter.insertAndReturnId(
         accountRelation, OnConflictStrategy.replace);
   }
 
   @override
+  Future<void> addList(List<AccountBinding> accountBindingList) async {
+    await _accountBindingInsertionAdapter.insertList(
+        accountBindingList, OnConflictStrategy.replace);
+  }
+
+  @override
   Future<int> deleteByEntity(AccountBinding accountRelation) {
-    return _accountRelationDeletionAdapter
+    return _accountBindingDeletionAdapter
         .deleteAndReturnChangedRows(accountRelation);
   }
 }
@@ -327,9 +343,26 @@ class _$OldPasswordDao extends OldPasswordDao {
   }
 
   @override
+  Future<List<OldPassword>> findAll() async {
+    return _queryAdapter.queryList('SELECT * FROM OldPassword',
+        mapper: (Map<String, Object?> row) => OldPassword(
+            row['id'] as int?,
+            row['accountId'] as int,
+            row['password'] as String,
+            row['beginTime'] as String,
+            row['memo'] as String));
+  }
+
+  @override
   Future<int> add(OldPassword oldPassword) {
     return _oldPasswordInsertionAdapter.insertAndReturnId(
         oldPassword, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> addList(List<OldPassword> oldPasswordList) async {
+    await _oldPasswordInsertionAdapter.insertList(
+        oldPasswordList, OnConflictStrategy.replace);
   }
 
   @override

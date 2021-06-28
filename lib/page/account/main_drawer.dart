@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:my_password_flutter/dbconfig/database_utils.dart';
-import 'package:my_password_flutter/entity/account.dart';
-import 'package:my_password_flutter/utils/json_utils.dart';
+import 'package:my_password_flutter/utils/import_export_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -112,32 +108,23 @@ class MainDrawer extends StatelessWidget {
         );
       },
     );
-    // 执行导入
-    var content = await File(filePath).readAsString();
-    List<Account> accountList = JsonUtils.jsonToAccountList(content);
-    var db = await DatabaseUtils.getDatabase();
-    db.accountDao.addList(accountList);
-
+    // 故意加长耗时, 太快的话给人一种"不真实感"
     await Future.delayed(Duration(seconds: 1));
+    // 执行导入
+    var importResult = await ImportExportUtils.importData(filePath);
+    // 关闭等待框
     if (dialogContext != null) {
       Navigator.pop(dialogContext!);
     }
-    Fluttertoast.showToast(msg: '导入成功', gravity: ToastGravity.CENTER);
-    return true;
+    return importResult;
   }
 
   void exportFile(BuildContext mainContext) async {
-    var db = await DatabaseUtils.getDatabase();
-    var accountList = await db.accountDao.findAll();
-    var jsonStr = JsonUtils.accountListToJson(accountList);
-
-    var exportFilePath = await getExportFilePath();
-    var file = File(exportFilePath);
-    if (!file.existsSync()) {
-      file.createSync(recursive: true);
+    // 执行导出
+    var exportFilePath = await ImportExportUtils.exportData();
+    if (exportFilePath.isEmpty) {
+      return;
     }
-    file.writeAsString(jsonStr);
-    print(1);
 
     // 提示用户
     showDialog<bool>(
@@ -145,7 +132,7 @@ class MainDrawer extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text("提示"),
-          content: Text("为保证数据安全, 导出文件不会放在SD卡内, 建议分享至其他平台进行备份, 如私人邮箱/QQ/微信/云存储等"),
+          content: Text("为保证数据安全, 导出文件不会放在公共目录, 建议分享至其他平台进行备份, 如私人邮箱/QQ/微信/云存储等"),
           actions: <Widget>[
             TextButton(
               child: Text("取消"),

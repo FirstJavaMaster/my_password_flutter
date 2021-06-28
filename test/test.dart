@@ -1,16 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lpinyin/lpinyin.dart';
-import 'package:my_password_flutter/utils/json_utils.dart';
+import 'package:my_password_flutter/dto/data_container.dart';
 
 void main() {
-  test('test csv read', () {
-    File file = new File('F:/tmp/account.json');
+  test('test json read', () {
+    File file = new File('F:/tmp/data_backups.json');
     var content = file.readAsStringSync();
-    var accountList = JsonUtils.jsonToAccountList(content);
-
-    print(accountList);
+    var decode = json.decode(content);
+    var dataContainer = DataContainer.fromJson(decode);
+    print(dataContainer);
   });
 
   test('test pinyin', () {
