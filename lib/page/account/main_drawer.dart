@@ -23,12 +23,9 @@ class MainDrawer extends StatelessWidget {
               color: Colors.blue,
             ),
             child: Center(
-              child: SizedBox(
-                width: 80.0,
-                height: 80.0,
-                child: CircleAvatar(
-                  child: Text('R'),
-                ),
+              child: CircleAvatar(
+                radius: 40,
+                backgroundImage: AssetImage('images/logo.jpg'),
               ),
             ),
           ),
@@ -108,10 +105,10 @@ class MainDrawer extends StatelessWidget {
         );
       },
     );
-    // 故意加长耗时, 太快的话给人一种"不真实感"
-    await Future.delayed(Duration(seconds: 1));
     // 执行导入
     var importResult = await ImportExportUtils.importData(filePath);
+    // 故意加长耗时, 否则接下来的查询可能会"不生效", 而且太快的话给人一种"不真实感"
+    await Future.delayed(Duration(seconds: 1));
     // 关闭等待框
     if (dialogContext != null) {
       Navigator.pop(dialogContext!);

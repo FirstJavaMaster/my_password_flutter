@@ -107,6 +107,8 @@ class AccountListPageState extends State<AccountListPage> {
         );
       },
       itemScrollController: _itemScrollController,
+      // 配置 physics 的目的是为了列表选项过少时, 无法触发 RefreshIndicator 滚动的问题
+      physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
     );
   }
 
