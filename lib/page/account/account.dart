@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/page/account/base_info.dart';
 import 'package:my_password_flutter/page/account/old_password_list.dart';
 import 'package:my_password_flutter/page/account/binding_list.dart';
@@ -19,6 +20,17 @@ class AccountPageState extends State<AccountPage> {
 
   AccountPageState(this.id);
 
+  int bingingNumber = 0;
+
+  int oldPasswordNumber = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 预先查询"关联账号"和"历史密码"的数量, 在tab页上展示出来
+    _queryOtherNumber();
+  }
+
   @override
   Widget build(BuildContext context) {
     // DefaultTabController作用于内部的TabBar和TabBarView
@@ -30,8 +42,8 @@ class AccountPageState extends State<AccountPage> {
           bottom: TabBar(
             tabs: [
               Tab(text: '基本信息'),
-              Tab(text: '关联账号'),
-              Tab(text: '历史密码'),
+              Tab(text: '关联账号($bingingNumber)'),
+              Tab(text: '历史密码($oldPasswordNumber)'),
             ],
           ),
         ),
@@ -52,6 +64,20 @@ class AccountPageState extends State<AccountPage> {
         ),
       ),
     );
+  }
+
+  void _queryOtherNumber() async {
+    if (this.id == 0) {
+      return;
+    }
+
+    var appDatabase = await DatabaseUtils.getDatabase();
+    var bindingList = await appDatabase.accountBindingDao.findListBySourceId(this.id);
+    var oldPasswordList = await appDatabase.oldPasswordDao.findByAccountId(this.id);
+    setState(() {
+      this.bingingNumber = bindingList.length;
+      this.oldPasswordNumber = oldPasswordList.length;
+    });
   }
 }
 
