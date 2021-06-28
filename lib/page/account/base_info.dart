@@ -223,10 +223,9 @@ class BaseInfoState extends State<BaseInfo> {
   void _recordOldPassword(Account account) {
     DatabaseUtils.getDatabase().then((db) {
       db.oldPasswordDao.findByAccountId(id).then((oldPasswordList) {
-        if (oldPasswordList.isNotEmpty && oldPasswordList[0].password == account.password) {
-          return;
+        if (oldPasswordList.isEmpty || oldPasswordList[0].password != account.password) {
+          db.oldPasswordDao.add(OldPassword(null, id, account.password, DateTime.now().toString(), ''));
         }
-        db.oldPasswordDao.add(OldPassword(null, id, account.password, DateTime.now().toString(), ''));
       });
     });
   }

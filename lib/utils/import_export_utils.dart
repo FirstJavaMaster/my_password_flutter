@@ -34,6 +34,19 @@ class ImportExportUtils {
     db.accountDao.addList(dataContainer.accountList);
     db.accountBindingDao.addList(dataContainer.accountBindingList);
     db.oldPasswordDao.addList(dataContainer.oldPasswordList);
+
+    // 兼容历史密码缺失的场景
+    var accountList = await db.accountDao.findAll();
+    accountList.forEach((account) async {
+      if (account.id == null || account.password.isEmpty) {
+        return;
+      }
+      var oldPasswordList = await db.oldPasswordDao.findByAccountId(account.id!);
+      if (oldPasswordList.isEmpty || oldPasswordList[0].password != account.password) {
+        var oldPassword = OldPassword(null, account.id!, account.password, DateTime.now().toString(), '');
+        db.oldPasswordDao.add(oldPassword);
+      }
+    });
   }
 
   static Future<String> exportData() async {
