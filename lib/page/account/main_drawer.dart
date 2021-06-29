@@ -20,7 +20,11 @@ class MainDrawer extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              gradient: LinearGradient(
+                colors: [Color(0xFF9708CC), Color(0xFF43CBFF)],
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+              ),
             ),
             child: Center(
               child: CircleAvatar(

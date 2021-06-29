@@ -7,7 +7,7 @@ class GradientBar {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.lightBlue, Colors.cyanAccent.shade400],
+          colors: [Color(0xFF5151E5), Color(0xFF72EDF2)],
           begin: Alignment.bottomLeft,
           end: Alignment.topRight,
         ),
