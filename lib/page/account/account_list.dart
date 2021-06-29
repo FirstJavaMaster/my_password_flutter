@@ -6,6 +6,7 @@ import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/page/account/account.dart';
 import 'package:my_password_flutter/page/account/main_drawer.dart';
+import 'package:my_password_flutter/page/components/gradient_bar.dart';
 import 'package:my_password_flutter/utils/constants.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -37,6 +38,7 @@ class AccountListPageState extends State<AccountListPage> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('My Password'),
+        flexibleSpace: GradientBar.gradientBar,
       ),
       drawer: MainDrawer((dataChanged) => _getAccountList()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

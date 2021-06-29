@@ -3,6 +3,7 @@ import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/page/account/base_info.dart';
 import 'package:my_password_flutter/page/account/old_password_list.dart';
 import 'package:my_password_flutter/page/account/binding_list.dart';
+import 'package:my_password_flutter/page/components/gradient_bar.dart';
 
 class AccountPage extends StatefulWidget {
   int id = 0;
@@ -39,6 +40,7 @@ class AccountPageState extends State<AccountPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(id == 0 ? '创建账号' : '账号详情'),
+          flexibleSpace: GradientBar.gradientBar,
           bottom: TabBar(
             tabs: [
               Tab(text: '基本信息'),
