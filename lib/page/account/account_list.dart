@@ -56,7 +56,7 @@ class AccountListPageState extends State<AccountListPage> {
             // 默认是透明, 改成白色, 可以防止"透视"
             Container(
               color: Colors.white,
-              child: _buildPart(),
+              child: _buildPartList(),
             ),
             Positioned(
               right: 10,
@@ -86,12 +86,12 @@ class AccountListPageState extends State<AccountListPage> {
     }
   }
 
-  Widget _buildPart() {
+  Widget _buildPartList() {
     return ScrollablePositionedList.builder(
       itemCount: this.accountIndexList.length + 1,
       itemBuilder: (context, index) {
         // 最后一个列表项
-        if (index == accountIndexList.length) {
+        if (index == this.accountIndexList.length) {
           return _buildTailMemo();
         }
 
@@ -99,20 +99,27 @@ class AccountListPageState extends State<AccountListPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.black12),
-              width: double.infinity,
-              child: Text(
-                accountIndex,
-                textScaleFactor: 1.2,
-              ),
-            ),
+            _buildPartTitle(accountIndex),
             _buildRowList(accountIndex),
           ],
         );
       },
       itemScrollController: _itemScrollController,
+    );
+  }
+
+  Widget _buildPartTitle(String accountIndex) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(color: Colors.black12),
+      width: double.infinity,
+      // (点击"用户名"/"密码"可以快捷复制)
+      child: Row(
+        children: [
+          Text(accountIndex, textScaleFactor: 1.2),
+          Text('  (点击"用户名"/"密码"可以快捷复制)', style: TextStyle(color: Colors.black45)),
+        ],
+      ),
     );
   }
 
@@ -195,12 +202,12 @@ class AccountListPageState extends State<AccountListPage> {
       child: Center(
         child: GestureDetector(
           child: Column(
-            children: [Text('没有更多了, 点我刷新'), Text('_(:* ｣∠)_')],
+            children: [
+              Text(this.accountList.isEmpty ? '什么都没有, 点击下方按钮添加一个吧' : '已经到底了, 点我刷新'),
+              Text('_(:* ｣∠)_'),
+            ],
           ),
-          onTap: () {
-            _itemScrollController.jumpTo(index: 0);
-            _getAccountList(showToast: true);
-          },
+          onTap: () => _getAccountList(showToast: true),
         ),
       ),
     );
