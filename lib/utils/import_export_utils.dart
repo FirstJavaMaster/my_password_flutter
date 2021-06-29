@@ -82,8 +82,7 @@ class ImportExportUtils {
   static Future<String> getExportFilePath() async {
     var docPath = (await getApplicationDocumentsDirectory()).path;
 
-    var now = DateTime.now();
-    String filename = 'my-password-backup.${now.year}${now.month}${now.day}.${now.hour}-${now.minute}-${now.second}.json';
+    String filename = 'my-password-backup.json';
     return docPath + '/export/' + filename;
   }
 }
