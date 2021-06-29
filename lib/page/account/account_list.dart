@@ -107,8 +107,6 @@ class AccountListPageState extends State<AccountListPage> {
         );
       },
       itemScrollController: _itemScrollController,
-      // 配置 physics 的目的是为了列表选项过少时, 无法触发 RefreshIndicator 滚动的问题
-      physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
     );
   }
 
@@ -162,31 +160,42 @@ class AccountListPageState extends State<AccountListPage> {
 
   Widget _buildIndexBar() {
     return Card(
-      child: Column(
-        children: () {
-          return this.accountIndexList.map((index) {
-            return InkWell(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
-                child: Text(index),
-              ),
-              onTap: () {
-                Fluttertoast.showToast(msg: '选择 $index', gravity: ToastGravity.CENTER, fontSize: 16);
-                var indexOfIndex = this.accountIndexList.indexOf(index);
-                _itemScrollController.scrollTo(index: indexOfIndex, duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
-              },
-            );
-          }).toList();
-        }(),
+      child: Padding(
+        padding: EdgeInsets.only(top: 5, bottom: 5),
+        child: Column(
+          children: () {
+            return this.accountIndexList.map((index) {
+              return InkWell(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                  child: Text(index),
+                ),
+                onTap: () {
+                  Fluttertoast.showToast(msg: '选择 $index', gravity: ToastGravity.CENTER, fontSize: 16);
+                  var indexOfIndex = this.accountIndexList.indexOf(index);
+                  _itemScrollController.scrollTo(index: indexOfIndex, duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+                },
+              );
+            }).toList();
+          }(),
+        ),
       ),
     );
   }
 
   Widget _buildTailMemo() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 40, 0, 100),
+      padding: EdgeInsets.only(top: 40, bottom: 100),
       child: Center(
-        child: Text('没有更多了 (＞﹏＜)'),
+        child: GestureDetector(
+          child: Column(
+            children: [Text('没有更多了, 点我刷新'), Text('_(:* ｣∠)_')],
+          ),
+          onTap: () {
+            _itemScrollController.jumpTo(index: 0);
+            _getAccountList(showToast: true);
+          },
+        ),
       ),
     );
   }
