@@ -50,8 +50,14 @@ class AccountListPageState extends State<AccountListPage> {
         onRefresh: () async => _getAccountList(showToast: true),
         child: Stack(
           alignment: Alignment.center,
+          // 未指定位置的子元素会自动占满Stack空间
+          fit: StackFit.expand,
           children: [
-            _buildPart(),
+            // 默认是透明, 改成白色, 可以防止"透视"
+            Container(
+              color: Colors.white,
+              child: _buildPart(),
+            ),
             Positioned(
               right: 10,
               child: _buildIndexBar(),
