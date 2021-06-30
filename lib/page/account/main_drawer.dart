@@ -73,6 +73,11 @@ class MainDrawer extends StatelessWidget {
               exportFile(mainContext);
             },
           ),
+          ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('关于本软件'),
+            onTap: () => _showAppInfoDialog(context),
+          )
         ],
       ),
     );
@@ -159,5 +164,38 @@ class MainDrawer extends StatelessWidget {
     var now = DateTime.now();
     String filename = 'my-password-backup.${now.year}${now.month}${now.day}.${now.hour}-${now.minute}-${now.second}.json';
     return docPath + '/export/' + filename;
+  }
+
+  void _showAppInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(child: Text('My Password 1.0')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('本软件提供密码记录功能, 操作符合国人习惯, 简单便捷. 主要有以下特性:'),
+              SizedBox(height: 10),
+              Text('  •  高级索引列表, 支持汉语拼音索引, 内容再多也能快速定位'),
+              Text('  •  支持账号关联, 记录各个网站的第三方登陆方式'),
+              Text('  •  自动记录历史密码, 快速找到以前的你'),
+              SizedBox(height: 10),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                    TextSpan(text: '隐私保护说明: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: '用户数据始终保存在应用私有空间, 其他应用无法访问; 整个使用过程不会联网, 因此建议定时导出文件并分享至私人邮箱/QQ/微信/云存储等其他平台进行备份.')
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              Text('2021 夏  •  by Tong'),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
