@@ -14,6 +14,11 @@ void main() {
     print(dataContainer);
   });
 
+  test('test &', () {
+    print(0xFF5151E5 & 0xFFFFFFFF);
+    print(0x5151E5 & 0xFFFFFFFF);
+  });
+
   test('test pinyin', () {
     String s = '测试中文';
     String s0 = '奇偶';
