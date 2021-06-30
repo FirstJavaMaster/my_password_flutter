@@ -115,13 +115,14 @@ class MainDrawer extends StatelessWidget {
       },
     );
     // 执行导入
-    var importResult = await ImportExportUtils.importData(filePath);
+    bool importResult = await ImportExportUtils.importData(filePath);
     // 故意加长耗时, 否则接下来的查询可能会"不生效", 而且太快的话给人一种"不真实感"
     await Future.delayed(Duration(seconds: 1));
     // 关闭等待框
     if (dialogContext != null) {
       Navigator.pop(dialogContext!);
     }
+    Fluttertoast.showToast(msg: importResult ? '导入成功' : '导入失败', gravity: ToastGravity.CENTER);
     return importResult;
   }
 

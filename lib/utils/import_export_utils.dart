@@ -14,18 +14,16 @@ class ImportExportUtils {
   // 文件导入
   static Future<bool> importData(String filePath) async {
     try {
-      _doImportData(filePath);
-      Fluttertoast.showToast(msg: '导入成功', gravity: ToastGravity.CENTER);
+      await _doImportData(filePath);
       return true;
     } catch (e) {
-      Fluttertoast.showToast(msg: '导入失败', gravity: ToastGravity.CENTER);
       print(e);
       return false;
     }
   }
 
   @transaction
-  static void _doImportData(String filePath) async {
+  static Future<void> _doImportData(String filePath) async {
     var content = await File(filePath).readAsString();
     var decode = json.decode(content);
     DataContainer dataContainer = DataContainer.fromJson(decode);
