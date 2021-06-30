@@ -163,7 +163,7 @@ class AccountListPageState extends State<AccountListPage> {
         child: Text(
           content,
           textScaleFactor: 1.2,
-          overflow: TextOverflow.ellipsis,
+          overflow: TextOverflow.fade,
           style: TextStyle(height: 1.5),
         ),
       ),
