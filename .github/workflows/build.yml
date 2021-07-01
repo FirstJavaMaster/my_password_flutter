@@ -7,6 +7,9 @@ jobs:
     name: build apk job
     runs-on: ubuntu-latest
     steps:
-      - name: build apk step
-        run:
-          flutter build apk
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build apk
