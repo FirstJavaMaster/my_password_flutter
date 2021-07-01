@@ -1,0 +1,12 @@
+name: build actions
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build_job:
+    name: build apk job
+    runs-on: ubuntu-latest
+    steps:
+      - name: build apk step
+        run:
+          flutter build apk
