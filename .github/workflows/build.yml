@@ -28,3 +28,4 @@ jobs:
           tag: v${{steps.get_version.outputs.version}}_${{steps.get_time.outputs.formattedTime}}
           body: "auto release when push"
           artifacts: "build/app/outputs/apk/release/*.apk"
+          prerelease: true
