@@ -49,7 +49,10 @@ class AccountListPageState extends State<AccountListPage> {
         },
       ),
       body: RefreshIndicator(
-        onRefresh: () async => _getAccountList(showToast: true),
+        onRefresh: () async {
+          await Future.delayed(Duration(milliseconds: 500));
+          _getAccountList(showToast: true);
+        },
         child: Stack(
           alignment: Alignment.center,
           // 未指定位置的子元素会自动占满Stack空间
@@ -82,7 +85,6 @@ class AccountListPageState extends State<AccountListPage> {
       }).toSet();
       this.accountIndexList = Constants.keywordList.where((e) => indexOfFirstCharSet.contains(Constants.keywordList.indexOf(e))).toList();
     });
-    await Future.delayed(Duration(milliseconds: 500));
     if (showToast) {
       Fluttertoast.showToast(msg: '已刷新', gravity: ToastGravity.CENTER);
     }
