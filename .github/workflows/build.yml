@@ -13,3 +13,19 @@ jobs:
           channel: 'stable'
       - run: flutter pub get
       - run: flutter build apk
+      - uses: CumulusDS/get-yaml-paths-action@v0.1.0
+        id: get_version
+        with:
+          file: pubspec.yaml
+          version: version
+      - uses: 1466587594/get-current-time@v2
+        id: get_time
+        with:
+          format: YYYYMMDD.HHmmss
+      - uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.ACTION_TOKEN}}
+        with:
+          tag: v${{steps.get_version.outputs.version}}_${{steps.get_time.outputs.formattedTime}}
+          body: "auto release when push"
+          artifacts: "build/app/outputs/apk/release/*.apk"
