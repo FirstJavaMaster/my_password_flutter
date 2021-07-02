@@ -176,7 +176,7 @@ class MainDrawer extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('本软件提供密码记录功能, 操作符合国人习惯, 简单便捷. 主要有以下特性:'),
+              Text('本软件提供密码记录功能, 操作简单便捷. 主要有以下特性:'),
               SizedBox(height: 10),
               Text('  •  高级索引列表, 支持汉语拼音索引, 内容再多也能快速定位'),
               Text('  •  支持账号关联, 记录各个网站的第三方登陆方式'),
