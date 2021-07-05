@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/utils/import_export_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainDrawer extends StatelessWidget {
   // 改变这个值则会触发主页面的动作
@@ -182,14 +183,16 @@ class MainDrawer extends StatelessWidget {
               Text('  •  支持账号关联, 记录各个网站的第三方登陆方式'),
               Text('  •  自动记录历史密码, 快速找到以前的你'),
               SizedBox(height: 10),
-              RichText(
-                text: TextSpan(
-                  style: DefaultTextStyle.of(context).style,
-                  children: [
-                    TextSpan(text: '隐私保护说明: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextSpan(text: '用户数据始终保存在应用私有空间, 其他应用无法访问; 整个使用过程不会联网, 因此建议定时导出文件并分享至私人邮箱/QQ/微信/云存储等其他平台进行备份.')
-                  ],
-                ),
+              Text('隐私保护说明', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('用户数据始终保存在应用私有空间, 其他应用无法访问; 整个使用过程不会联网, 因此建议定时导出文件并分享至私人邮箱/QQ/微信/云存储等其他平台进行备份.', textScaleFactor: 0.8),
+              SizedBox(height: 10),
+              Text('开源地址'),
+              TextButton(
+                onPressed: () {
+                  String urlString = 'https://github.com/FirstJavaMaster/my_password_flutter';
+                  canLaunch(urlString).then((value) => value ? launch(urlString) : Fluttertoast.showToast(msg: '无法跳转'));
+                },
+                child: Text('https://github.com/FirstJavaMaster/my_password_flutter'),
               ),
               SizedBox(height: 10),
               Text('2021 夏  •  by Tong'),
