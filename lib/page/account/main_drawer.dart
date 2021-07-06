@@ -192,7 +192,7 @@ class MainDrawer extends StatelessWidget {
                   String urlString = 'https://github.com/FirstJavaMaster/my_password_flutter';
                   canLaunch(urlString).then((value) => value ? launch(urlString) : Fluttertoast.showToast(msg: '无法跳转'));
                 },
-                child: Text('https://github.com/FirstJavaMaster/my_password_flutter'),
+                child: Text('https://github.com/FirstJavaMaster/my_password_flutter', textAlign: TextAlign.center),
               ),
               SizedBox(height: 10),
               Text('2021 夏  •  by Tong'),
