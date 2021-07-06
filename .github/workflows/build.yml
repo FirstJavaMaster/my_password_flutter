@@ -13,11 +13,8 @@ jobs:
           channel: 'stable'
       - run: flutter pub get
       - run: flutter build apk
-      - uses: CumulusDS/get-yaml-paths-action@v0.1.0
+      - uses: its404/get-flutter-version@v1.0.0
         id: get_version
-        with:
-          file: pubspec.yaml
-          version: version
       - uses: 1466587594/get-current-time@v2
         id: get_time
         with:
@@ -25,7 +22,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.ACTION_TOKEN }}
-          tag: v${{steps.get_version.outputs.version}}_beta_${{steps.get_time.outputs.formattedTime}}
+          tag: v${{steps.get_version.outputs.version_number}}_beta_${{steps.get_time.outputs.formattedTime}}
           body: "auto release when push"
           artifacts: "build/app/outputs/apk/release/*.apk"
           prerelease: true
