@@ -25,7 +25,14 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.ACTION_TOKEN }}
-          tag: v${{steps.get_version.outputs.version}}_${{steps.get_time.outputs.formattedTime}}
+          tag: v${{steps.get_version.outputs.version}}_beta_${{steps.get_time.outputs.formattedTime}}
           body: "auto release when push"
           artifacts: "build/app/outputs/apk/release/*.apk"
           prerelease: true
+      - uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          keep_latest: 3
+          delete_tag_pattern: _beta_
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+
