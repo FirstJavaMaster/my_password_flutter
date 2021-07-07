@@ -139,7 +139,6 @@ class VersionChecker {
     if (lastCheckTimeString == null || lastCheckTimeString.isEmpty) {
       return true;
     }
-    print('上一次检查更新时间: $lastCheckTimeString');
     var lastCheckTime = DateTime.parse(lastCheckTimeString);
     return lastCheckTime.add(Duration(hours: 2)).isBefore(DateTime.now());
   }
