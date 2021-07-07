@@ -43,27 +43,25 @@ class VersionChecker {
       );
     }
 
-    // 本地版本
-    var packageInfo = await PackageInfo.fromPlatform();
-    String localVersion = packageInfo.version;
-    // 远程版本
-    var response = await Dio().get(_remoteVersionCheckApi);
-    var githubReleaseResponse = GithubReleaseResponse.fromJson(json.decode(response.toString()));
-    String remoteVersion = githubReleaseResponse.tagName ?? '';
-    if (remoteVersion.isEmpty) {
-      Fluttertoast.showToast(msg: '获取新版本失败');
-      print('获取新版本失败:\n$response');
-    }
     // 对比版本
-    bool compareResult = _compareVersion(localVersion, remoteVersion);
-    print('版本检查结果: $localVersion :: $remoteVersion --> $compareResult');
-    // 结果出来了就关闭等待框, 并更新最后一次的检查时间
-    _updateLastTime();
-    if (loadingContext != null) {
-      Navigator.pop(loadingContext!);
+    GithubReleaseResponse? githubReleaseResponse;
+    try {
+      githubReleaseResponse = await _compareVersion();
+    } catch (dioError) {
+      print(dioError);
+      Fluttertoast.showToast(msg: '检查失败 ${dioError.toString()}', toastLength: Toast.LENGTH_LONG);
+      return;
+    } finally {
+      // 关闭等待框
+      if (loadingContext != null) {
+        Navigator.pop(loadingContext!);
+      }
     }
+
+    // 结果出来了就, 并更新最后一次的检查时间
+    _updateLastTime();
     // 不需更新的话给予提示
-    if (!compareResult) {
+    if (githubReleaseResponse == null) {
       if (!quietMode) {
         Fluttertoast.showToast(msg: '已经是最新版');
       }
@@ -78,7 +76,7 @@ class VersionChecker {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(githubReleaseResponse.tagName.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(githubReleaseResponse!.tagName.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
               Text(githubReleaseResponse.body.toString()),
             ],
           ),
@@ -92,7 +90,7 @@ class VersionChecker {
               onPressed: () {
                 //关闭对话框并返回true
                 Navigator.of(context).pop(true);
-                String urlString = githubReleaseResponse.htmlUrl ?? '';
+                String urlString = githubReleaseResponse!.htmlUrl ?? '';
                 canLaunch(urlString).then((value) => value ? launch(urlString) : Fluttertoast.showToast(msg: '地址错误: $urlString'));
               },
             ),
@@ -102,21 +100,35 @@ class VersionChecker {
     );
   }
 
-  // 根据传入的两个版本号比较大小. 当且仅当remoteVersion版本高于localVersion时返回true
-  static bool _compareVersion(String localVersion, String remoteVersion) {
+  // 根据传入的两个版本号比较大小. 当且仅当remoteVersion版本高于localVersion时返回新版本信息
+  static Future<GithubReleaseResponse?> _compareVersion() async {
+    // 本地版本
+    var packageInfo = await PackageInfo.fromPlatform();
+    String localVersion = packageInfo.version;
+    // 远程版本
+    var response = await Dio().get(_remoteVersionCheckApi);
+    var githubReleaseResponse = GithubReleaseResponse.fromJson(json.decode(response.toString()));
+    String remoteVersion = githubReleaseResponse.tagName ?? '';
+    if (remoteVersion.isEmpty) {
+      Fluttertoast.showToast(msg: '获取新版本失败');
+      print('获取新版本失败:\n$response');
+    }
+
     var localVersionArray = localVersion.replaceAll('v', '').split('.');
     var remoteVersionArray = remoteVersion.replaceAll('v', '').split('.');
 
     var maxLength = [localVersionArray.length, remoteVersionArray.length].reduce(max);
     for (var i = 0; i < maxLength; i++) {
-      int subLocalVersion = i < localVersionArray.length ? int.parse(localVersionArray[i]) : 0;
-      int subRemoteVersion = i < remoteVersionArray.length ? int.parse(remoteVersionArray[i]) : 0;
-      if (subLocalVersion == subRemoteVersion) {
+      int localSubVersion = i < localVersionArray.length ? int.parse(localVersionArray[i]) : 0;
+      int remoteSubVersion = i < remoteVersionArray.length ? int.parse(remoteVersionArray[i]) : 0;
+      if (localSubVersion == remoteSubVersion) {
         continue;
       }
-      return subLocalVersion < subRemoteVersion;
+      if (localSubVersion < remoteSubVersion) {
+        return githubReleaseResponse;
+      }
     }
-    return false;
+    return null;
   }
 
   // 检查"最后一次检查更新的时间"
