@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/utils/import_export_utils.dart';
+import 'package:my_password_flutter/utils/version_checker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -70,15 +71,18 @@ class MainDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.share),
             title: Text('导出数据'),
-            onTap: () {
-              exportFile(mainContext);
-            },
+            onTap: () => exportFile(mainContext),
           ),
           ListTile(
-            leading: Icon(Icons.info_outline),
+            leading: Icon(Icons.sync),
+            title: Text('检查更新'),
+            onTap: () => VersionChecker.check(mainContext),
+          ),
+          ListTile(
+            leading: Icon(Icons.help_outline),
             title: Text('关于本软件'),
             onTap: () => _showAppInfoDialog(context),
-          )
+          ),
         ],
       ),
     );
