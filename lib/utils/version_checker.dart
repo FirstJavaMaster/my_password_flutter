@@ -49,7 +49,9 @@ class VersionChecker {
       githubReleaseResponse = await _compareVersion();
     } catch (dioError) {
       print(dioError);
-      Fluttertoast.showToast(msg: '检查失败 ${dioError.toString()}', toastLength: Toast.LENGTH_LONG);
+      if (!quietMode) {
+        Fluttertoast.showToast(msg: '检查失败 ${dioError.toString()}', toastLength: Toast.LENGTH_LONG);
+      }
       return;
     } finally {
       // 关闭等待框
