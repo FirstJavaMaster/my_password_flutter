@@ -140,7 +140,7 @@ class AccountListPageState extends State<AccountListPage> {
       child: Row(
         children: [
           Text(accountIndex, textScaleFactor: 1.2),
-          Text('  (点击"用户名"/"密码"可以快捷复制)', style: TextStyle(color: Colors.black45)),
+          Text('  (点击"用户名"-"密码"可以快捷复制)', style: TextStyle(color: Colors.black45)),
         ],
       ),
     );
