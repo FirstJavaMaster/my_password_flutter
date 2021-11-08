@@ -22,7 +22,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.ACTION_TOKEN }}
-          tag: v${{steps.get_version.outputs.version_number}}_beta_${{steps.get_time.outputs.formattedTime}}
+          tag: v${{steps.get_version.outputs.version_number}}_dev_${{steps.get_time.outputs.formattedTime}}
           body: "auto release when push"
           artifacts: "build/app/outputs/apk/release/*.apk"
           prerelease: true
@@ -30,7 +30,7 @@ jobs:
         with:
           keep_latest: 3
           delete_tags: true
-          delete_tag_pattern: _beta_
+          delete_tag_pattern: _dev_
         env:
           GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
 
