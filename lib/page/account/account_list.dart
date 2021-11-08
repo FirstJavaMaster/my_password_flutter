@@ -68,11 +68,8 @@ class AccountListPageState extends State<AccountListPage> {
     var accountList = await db.accountDao.findAll();
     // 放好数据
     this.accountList = accountList;
-    var indexOfFirstCharSet = accountList.map((e) {
-      var indexOfFirstChar = Constants.keywordList.indexOf(e.getTagChar());
-      return indexOfFirstChar < 0 ? 0 : indexOfFirstChar;
-    }).toSet();
-    this.accountIndexList = Constants.keywordList.where((e) => indexOfFirstCharSet.contains(Constants.keywordList.indexOf(e))).toList();
+    Set tagCharSet = accountList.map((e) => e.getTagChar()).toSet();
+    this.accountIndexList = Constants.keywordList.where((e) => tagCharSet.contains(e)).toList();
     // push事件
     _contentStreamController.sink.add(DateTime.now());
   }
