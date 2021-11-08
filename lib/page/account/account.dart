@@ -68,39 +68,6 @@ class AccountPageState extends State<AccountPage> {
         return true;
       },
     );
-
-    // DefaultTabController作用于内部的TabBar和TabBarView
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(id == 0 ? '创建账号' : '账号详情'),
-          flexibleSpace: GradientBar.gradientBar,
-          bottom: TabBar(
-            tabs: [
-              Tab(text: '基本信息'),
-              Tab(text: '关联账号($bingingNumber)'),
-              Tab(text: '历史密码($oldPasswordNumber)'),
-            ],
-          ),
-        ),
-        body: NotificationListener<IdChangeNotification>(
-          child: TabBarView(
-            children: [
-              BaseInfo(id),
-              BindingList(id),
-              OldPasswordList(id),
-            ],
-          ),
-          onNotification: (notification) {
-            setState(() {
-              this.id = notification.id;
-            });
-            return true;
-          },
-        ),
-      ),
-    );
   }
 
   void _queryOtherNumber() async {
