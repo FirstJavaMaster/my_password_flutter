@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/dbconfig/database_utils.dart';
 import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/entity/account_binding.dart';
@@ -150,6 +151,7 @@ class BindingListState extends State<BindingList> {
             relation.id = id;
             relationList.add(relation);
           });
+          Fluttertoast.showToast(msg: '关联成功');
         });
       });
     });
@@ -227,14 +229,14 @@ class BindingListState extends State<BindingList> {
       builder: (context) {
         return AlertDialog(
           title: Text('提示'),
-          content: Text('确定要删除此关联关系吗?'),
+          content: Text('确定要移除此关联关系吗?'),
           actions: [
             TextButton(
               child: Text('取消'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('删除', style: TextStyle(color: Colors.red)),
+              child: Text('移除', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 DatabaseUtils.getDatabase().then((db) {
                   db.accountBindingDao.deleteByEntity(relation).then((value) {
@@ -242,6 +244,7 @@ class BindingListState extends State<BindingList> {
                       relationList = relationList.where((element) => element.id != relation.id).toList();
                       Navigator.of(context).pop(true);
                     });
+                    Fluttertoast.showToast(msg: '移除成功');
                   });
                 });
               },
