@@ -5,20 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VersionChecker {
   static final String _remoteVersionCheckApi = "https://api.github.com/repos/FirstJavaMaster/my_password_flutter/releases/latest";
 
-  static const String _keyOfLastCheckTime = 'last_check_time';
-
   static Future<void> check(BuildContext context, {bool quietMode = false, bool checkLastTime = false}) async {
-    // 判断最后一次的检查更新时间
-    if (checkLastTime && !await _checkLastTime()) {
-      return;
-    }
-
     // 展示等待对话框
     BuildContext? loadingContext;
     if (!quietMode) {
@@ -60,8 +52,6 @@ class VersionChecker {
       }
     }
 
-    // 结果出来了就, 并更新最后一次的检查时间
-    _updateLastTime();
     // 不需更新的话给予提示
     if (githubReleaseResponse == null) {
       if (!quietMode) {
@@ -131,23 +121,6 @@ class VersionChecker {
       }
     }
     return null;
-  }
-
-  // 检查"最后一次检查更新的时间"
-  // 时间未找到或者在2个小时以外则返回true, 否则返回false
-  static Future<bool> _checkLastTime() async {
-    var sharedPreferences = await SharedPreferences.getInstance();
-    var lastCheckTimeString = sharedPreferences.getString(_keyOfLastCheckTime);
-    if (lastCheckTimeString == null || lastCheckTimeString.isEmpty) {
-      return true;
-    }
-    var lastCheckTime = DateTime.parse(lastCheckTimeString);
-    return lastCheckTime.add(Duration(hours: 2)).isBefore(DateTime.now());
-  }
-
-  static Future<void> _updateLastTime() async {
-    var sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString(_keyOfLastCheckTime, DateTime.now().toString());
   }
 }
 
