@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 检查新版本
-    Future.delayed(Duration(seconds: 10), () => VersionChecker.check(context, quietMode: true, checkLastTime: true));
+    Future.delayed(Duration(seconds: 10), () => VersionChecker.check(context, quietMode: true));
     return new MaterialApp(
       title: 'Startup Name Generator',
       home: new AccountListPage(),

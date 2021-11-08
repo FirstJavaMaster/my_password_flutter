@@ -337,7 +337,7 @@ class _$OldPasswordDao extends OldPasswordDao {
   @override
   Future<List<OldPassword>> findByAccountId(int accountId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM OldPassword WHERE accountId = ?1 ORDER BY beginTime DESC',
+        'SELECT * FROM OldPassword WHERE accountId = ?1 ORDER BY beginTime, id DESC',
         mapper: (Map<String, Object?> row) => OldPassword(row['id'] as int?, row['accountId'] as int, row['password'] as String, row['beginTime'] as String, row['memo'] as String),
         arguments: [accountId]);
   }

@@ -6,6 +6,17 @@ import 'package:lpinyin/lpinyin.dart';
 import 'package:my_password_flutter/dto/data_container.dart';
 
 void main() {
+  //
+  test('test get http request', () async {
+    var request = await new HttpClient().getUrl(Uri.parse('https://api.github.com/repos/FirstJavaMaster/my_password_flutter/releases/latest'));
+    var response = await request.close();
+    print(response.statusCode);
+
+    var json = await response.transform(utf8.decoder).join();
+    var data = jsonDecode(json);
+    print(data);
+  });
+
   test('test json read', () {
     File file = new File('F:/tmp/data_backups.json');
     var content = file.readAsStringSync();
