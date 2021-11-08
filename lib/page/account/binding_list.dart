@@ -6,6 +6,8 @@ import 'package:my_password_flutter/entity/account.dart';
 import 'package:my_password_flutter/entity/account_binding.dart';
 import 'package:my_password_flutter/utils/constants.dart';
 
+import 'account.dart';
+
 class BindingList extends StatefulWidget {
   final int sourceId;
 
@@ -151,6 +153,7 @@ class BindingListState extends State<BindingList> {
             relation.id = id;
             relationList.add(relation);
           });
+          _relationChanged();
           Fluttertoast.showToast(msg: '关联成功');
         });
       });
@@ -244,6 +247,7 @@ class BindingListState extends State<BindingList> {
                       relationList = relationList.where((element) => element.id != relation.id).toList();
                       Navigator.of(context).pop(true);
                     });
+                    _relationChanged();
                     Fluttertoast.showToast(msg: '移除成功');
                   });
                 });
@@ -253,5 +257,11 @@ class BindingListState extends State<BindingList> {
         );
       },
     );
+  }
+
+  /// 账号绑定关系变化时调用此方法
+  void _relationChanged() {
+    // 通知父组件
+    IdChangeNotification(this.sourceId).dispatch(context);
   }
 }
