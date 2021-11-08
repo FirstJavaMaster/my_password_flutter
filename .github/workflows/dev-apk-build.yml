@@ -1,4 +1,4 @@
-name: build actions
+name: dev apk build
 on:
   push:
     branches: [ dev ]
