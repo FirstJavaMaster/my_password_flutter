@@ -175,6 +175,8 @@ class BindingListState extends State<BindingList> {
   }
 
   void _showDialogOfKeywordPick(StateSetter setStateOfAccountPickDialog) {
+    // 提供一个不过滤的选择
+    String noFilter = "-";
     showDialog(
       context: context,
       builder: (context) {
@@ -184,7 +186,10 @@ class BindingListState extends State<BindingList> {
             Wrap(
               alignment: WrapAlignment.center,
               children: () {
-                return Constants.keywordList.map((keyword) {
+                // 把所有选择放在一起
+                var pickArrays = [noFilter];
+                pickArrays.addAll(Constants.keywordList);
+                return pickArrays.map((keyword) {
                   return TextButton(
                     child: Text(
                       keyword,
@@ -205,6 +210,9 @@ class BindingListState extends State<BindingList> {
     ).then((value) {
       if (value == null) {
         return;
+      }
+      if (value == noFilter) {
+        value = '';
       }
       setStateOfAccountPickDialog(() {
         this.keyword = value;
