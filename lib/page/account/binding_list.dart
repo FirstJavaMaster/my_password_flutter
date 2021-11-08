@@ -167,12 +167,7 @@ class BindingListState extends State<BindingList> {
       if (keyword.isEmpty) {
         return true;
       }
-      var filterField = account.siteName;
-      if (keyword == Constants.keywordNo) {
-        return RegExp(r'[0-9]').hasMatch(filterField);
-      } else {
-        return filterField.startsWith(keyword.toUpperCase()) || filterField.startsWith(keyword.toLowerCase());
-      }
+      return keyword == account.getTagChar();
     }).toList();
     setState(() {
       this.accountListFilter = accountListFilter;

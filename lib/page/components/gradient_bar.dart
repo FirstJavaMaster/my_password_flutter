@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// 沉浸式状态栏
 class GradientBar {
   static Widget gradientBar = _getGradientBar();
 

@@ -21,6 +21,9 @@ class Account {
     return account;
   }
 
+  /// 获取当前account的tag, 可用于分组和筛选
+  /// 根据account的sitePinYinName的首字母进行判断, 如果是数字, 则返回#
+  /// 默认是大写
   String getTagChar() {
     var firstChar = this.sitePinYinName.isEmpty ? Constants.keywordNo : this.sitePinYinName.substring(0, 1);
     var firstCharUpperCase = firstChar.toUpperCase();

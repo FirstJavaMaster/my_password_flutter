@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+/// 动态省略号, 每500ms变化一次
 class DynamicEllipsis extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
