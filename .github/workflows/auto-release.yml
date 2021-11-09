@@ -1,4 +1,4 @@
-name: dev apk build
+name: auto release
 on:
   push:
     branches: [ master ]
