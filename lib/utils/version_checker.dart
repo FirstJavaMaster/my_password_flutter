@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
@@ -98,10 +98,8 @@ class VersionChecker {
     var packageInfo = await PackageInfo.fromPlatform();
     String localVersion = packageInfo.version;
     // 远程版本
-    var request = await new HttpClient().getUrl(Uri.parse(_remoteVersionCheckApi));
-    var response = await request.close();
-    var json = await response.transform(utf8.decoder).join();
-    var githubReleaseResponse = GithubReleaseResponse.fromJson(jsonDecode(json));
+    var response = await Dio().get(_remoteVersionCheckApi);
+    var githubReleaseResponse = GithubReleaseResponse.fromJson(json.decode(response.toString()));
     String remoteVersion = githubReleaseResponse.tagName ?? '';
     if (remoteVersion.isEmpty) {
       Fluttertoast.showToast(msg: '获取新版本失败');
