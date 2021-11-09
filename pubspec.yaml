@@ -23,14 +23,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  floor: ^1.1.0
-  fluttertoast: ^8.0.7
+  floor: ^1.2.0
+  fluttertoast: ^8.0.8
   lpinyin: ^2.0.3
-  scrollable_positioned_list: ^0.2.0-nullsafety.0
-  path_provider: ^2.0.2
-  file_picker: ^3.0.2+2
-  share_plus: ^2.1.4
-  url_launcher: ^6.0.9
+  scrollable_positioned_list: ^0.2.2
+  path_provider: ^2.0.6
+  file_picker: ^4.2.1
+  share_plus: ^3.0.4
+  url_launcher: ^6.0.12
   package_info: ^2.0.2
   dio: ^4.0.1
 
