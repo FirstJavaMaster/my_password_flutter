@@ -77,6 +77,7 @@ class BaseInfoState extends State<BaseInfo> {
                         }
                         DatabaseUtils.getDatabase().then((db) {
                           account.sitePinYinName = PinyinHelper.getPinyinE(account.siteName);
+                          account.password = account.password.trim();
                           account.updateTime = DateTime.now().toString();
                           db.accountDao.add(account).then((id) {
                             // 更新数据
@@ -221,6 +222,9 @@ class BaseInfoState extends State<BaseInfo> {
   }
 
   void _recordOldPassword(Account account) {
+    if (account.password.isEmpty) {
+      return;
+    }
     DatabaseUtils.getDatabase().then((db) {
       db.oldPasswordDao.findByAccountId(id).then((oldPasswordList) {
         if (oldPasswordList.isEmpty || oldPasswordList[0].password != account.password) {
