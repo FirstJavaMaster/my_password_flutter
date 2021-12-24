@@ -223,9 +223,6 @@ class BaseInfoState extends State<BaseInfo> {
 
   /// 记录历史密码
   void _recordOldPassword(Account account) {
-    if (account.password.isEmpty) {
-      return;
-    }
     DatabaseUtils.getDatabase().then((db) {
       db.oldPasswordDao.findByAccountId(id).then((oldPasswordList) {
         if (oldPasswordList.isEmpty || oldPasswordList[0].password != account.password) {

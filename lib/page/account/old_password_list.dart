@@ -41,10 +41,18 @@ class OldPasswordState extends State<OldPasswordList> {
             itemBuilder: (context, index) {
               OldPassword oldPassword = oldPasswordList[index];
               return ListTile(
-                title: Text(
-                  oldPassword.password,
-                  textScaleFactor: 1.2,
-                ),
+                title: oldPassword.password.isEmpty
+                    ? Text(
+                        '(空)',
+                        style: TextStyle(
+                          color: Colors.black26,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      )
+                    : Text(
+                        oldPassword.password,
+                        textScaleFactor: 1.2,
+                      ),
                 trailing: Text(oldPassword.beginTime.split('.')[0]),
               );
             },
