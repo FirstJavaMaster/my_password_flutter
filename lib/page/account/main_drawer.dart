@@ -80,7 +80,7 @@ class MainDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.help_outline),
-            title: Text('关于本软件'),
+            title: Text('关于'),
             onTap: () => _showAppInfoDialog(context),
           ),
         ],
@@ -177,7 +177,7 @@ class MainDrawer extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(child: Text('My Password 1.0')),
+          title: Center(child: Text('My Password')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -199,7 +199,7 @@ class MainDrawer extends StatelessWidget {
                 child: Text('https://github.com/FirstJavaMaster/my_password_flutter', textAlign: TextAlign.center),
               ),
               SizedBox(height: 10),
-              Text('2021 夏  •  by Tong'),
+              Text('2021 冬  •  by Tong'),
             ],
           ),
         );
