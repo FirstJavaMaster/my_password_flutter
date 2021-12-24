@@ -1,8 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:my_password_flutter/dbconfig/database_utils.dart';
-import 'package:my_password_flutter/entity/old_password.dart';
 import 'package:my_password_flutter/utils/import_export_utils.dart';
 import 'package:my_password_flutter/utils/version_checker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,39 +77,6 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.sync),
             title: Text('检查更新'),
             onTap: () => VersionChecker.check(mainContext),
-          ),
-          ListTile(
-            leading: Icon(Icons.build_circle_outlined),
-            title: Text('数据整理'),
-            onTap: () {
-              DatabaseUtils.getDatabase().then((db) {
-                db.accountDao.findAll().then((accountList) {
-                  int finishNum = 0;
-                  accountList.forEach((account) {
-                    db.oldPasswordDao.findByAccountId(account.id!).then((oldPasswordList) {
-                      List<OldPassword> deleteList = [];
-                      for (int i = 0; i < oldPasswordList.length - 1; i++) {
-                        var oldPassword = oldPasswordList[i];
-                        var nextOldPassword = oldPasswordList[i + 1];
-                        if (oldPassword.password == nextOldPassword.password) {
-                          deleteList.add(oldPassword);
-                        }
-                      }
-                      // 删除冗余密码
-                      deleteList.forEach((oldPassword) {
-                        db.oldPasswordDao.deleteByEntity(oldPassword);
-                      });
-                      // 进度+1
-                      finishNum++;
-                      Fluttertoast.showToast(msg: '进度: $finishNum/${accountList.length}');
-                      if (finishNum == accountList.length) {
-                        Fluttertoast.showToast(msg: '整理完成');
-                      }
-                    });
-                  });
-                });
-              });
-            },
           ),
           ListTile(
             leading: Icon(Icons.help_outline),
