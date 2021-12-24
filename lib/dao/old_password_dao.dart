@@ -9,7 +9,7 @@ abstract class OldPasswordDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> addList(List<OldPassword> oldPasswordList);
 
-  @Query('SELECT * FROM OldPassword WHERE accountId = :accountId ORDER BY beginTime, id DESC')
+  @Query('SELECT * FROM OldPassword WHERE accountId = :accountId ORDER BY beginTime DESC, id DESC')
   Future<List<OldPassword>> findByAccountId(int accountId);
 
   @Query('SELECT * FROM OldPassword')

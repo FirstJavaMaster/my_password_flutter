@@ -221,6 +221,7 @@ class BaseInfoState extends State<BaseInfo> {
     ).then((value) => value ? Navigator.of(context).pop(true) : null);
   }
 
+  /// 记录历史密码
   void _recordOldPassword(Account account) {
     if (account.password.isEmpty) {
       return;

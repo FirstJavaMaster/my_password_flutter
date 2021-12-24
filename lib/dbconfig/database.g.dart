@@ -6,6 +6,7 @@ part of 'database.dart';
 // FloorGenerator
 // **************************************************************************
 
+// ignore: avoid_classes_with_only_static_members
 class $FloorAppDatabase {
   /// Creates a database builder for a persistent database.
   /// Once a database is built, you should keep a reference to it and re-use it.
@@ -337,7 +338,7 @@ class _$OldPasswordDao extends OldPasswordDao {
   @override
   Future<List<OldPassword>> findByAccountId(int accountId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM OldPassword WHERE accountId = ?1 ORDER BY beginTime, id DESC',
+        'SELECT * FROM OldPassword WHERE accountId = ?1 ORDER BY beginTime DESC, id DESC',
         mapper: (Map<String, Object?> row) => OldPassword(row['id'] as int?, row['accountId'] as int, row['password'] as String, row['beginTime'] as String, row['memo'] as String),
         arguments: [accountId]);
   }
