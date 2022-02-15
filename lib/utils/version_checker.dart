@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,56 +12,41 @@ import 'package:url_launcher/url_launcher.dart';
 class VersionChecker {
   static final String _remoteVersionCheckApi = "https://api.github.com/repos/FirstJavaMaster/my_password_flutter/releases/latest";
 
-  static Future<void> check(BuildContext context, {bool quietMode = false}) async {
+  // 检查更新
+  // 常规版: 整个检查流程都有提示
+  static Future<void> check(BuildContext context) async {
     // 展示等待对话框
-    BuildContext? loadingContext;
-    if (!quietMode) {
-      showDialog(
-        context: context,
-        barrierDismissible: false, //点击遮罩不关闭对话框
-        builder: (context) {
-          loadingContext = context;
-          return AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CircularProgressIndicator(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 26.0),
-                  child: Text("检查中..."),
-                )
-              ],
-            ),
-          );
-        },
-      );
-    }
-
+    SmartDialog.showLoading(msg: '检查中...');
     // 对比版本
-    GithubReleaseResponse? githubReleaseResponse;
     try {
-      githubReleaseResponse = await _compareVersion();
+      GithubReleaseResponse? githubReleaseResponse = await _findNewVersion();
+      if (githubReleaseResponse == null) {
+        SmartDialog.showToast('已经是最新版本');
+      } else {
+        _showNewVersion(context, githubReleaseResponse);
+      }
+    } catch (error) {
+      SmartDialog.showToast('检查失败 ${error.toString()}');
+    } finally {
+      SmartDialog.dismiss(status: SmartStatus.loading);
+    }
+  }
+
+  // 检查更新
+  // 安静版: 只在有新版本时才有提示, 否则没有其他任何提示
+  static Future<void> checkQuiet(BuildContext context) async {
+    try {
+      GithubReleaseResponse? githubReleaseResponse = await _findNewVersion();
+      if (githubReleaseResponse != null) {
+        _showNewVersion(context, githubReleaseResponse);
+      }
     } catch (dioError) {
       print(dioError);
-      if (!quietMode) {
-        Fluttertoast.showToast(msg: '检查失败 ${dioError.toString()}', toastLength: Toast.LENGTH_LONG);
-      }
-      return;
-    } finally {
-      // 关闭等待框
-      if (loadingContext != null) {
-        Navigator.pop(loadingContext!);
-      }
     }
+  }
 
-    // 不需更新的话给予提示
-    if (githubReleaseResponse == null) {
-      if (!quietMode) {
-        Fluttertoast.showToast(msg: '已经是最新版');
-      }
-      return;
-    }
-    // 提示升级
+  // 提示升级
+  static _showNewVersion(BuildContext context, GithubReleaseResponse githubReleaseResponse) {
     showDialog<bool>(
       context: context,
       builder: (context) {
@@ -68,7 +55,7 @@ class VersionChecker {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(githubReleaseResponse!.tagName.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(githubReleaseResponse.tagName.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
               Text(githubReleaseResponse.body.toString()),
             ],
           ),
@@ -82,7 +69,7 @@ class VersionChecker {
               onPressed: () {
                 //关闭对话框并返回true
                 Navigator.of(context).pop(true);
-                String urlString = githubReleaseResponse!.htmlUrl ?? '';
+                String urlString = githubReleaseResponse.htmlUrl ?? '';
                 canLaunch(urlString).then((value) => value ? launch(urlString) : Fluttertoast.showToast(msg: '地址错误: $urlString'));
               },
             ),
@@ -93,7 +80,7 @@ class VersionChecker {
   }
 
   // 根据传入的两个版本号比较大小. 当且仅当remoteVersion版本高于localVersion时返回新版本信息
-  static Future<GithubReleaseResponse?> _compareVersion() async {
+  static Future<GithubReleaseResponse?> _findNewVersion() async {
     // 本地版本
     var packageInfo = await PackageInfo.fromPlatform();
     String localVersion = packageInfo.version;
