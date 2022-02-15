@@ -2,7 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/utils/import_export_utils.dart';
-import 'package:my_password_flutter/utils/version_checker.dart';
+import 'package:my_password_flutter/utils/version_check_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -76,7 +76,7 @@ class MainDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.sync),
             title: Text('检查更新'),
-            onTap: () => VersionChecker.check(mainContext),
+            onTap: () => VersionCheckUtils.check(mainContext),
           ),
           ListTile(
             leading: Icon(Icons.help_outline),
