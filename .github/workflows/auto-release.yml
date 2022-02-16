@@ -8,11 +8,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: echo $SIGN_KEY_CONTENT | base64 -di > android/app/my-password-key.jks
+        env:
+          SIGN_KEY_CONTENT: ${{ secrets.SIGN_KEY_CONTENT }}
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
       - run: flutter pub get
       - run: flutter build apk
+        env:
+          SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD }}
+          SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
+          SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+          KEY_PATH: my-password-key.jks
       - uses: its404/get-flutter-version@v1.0.0
         id: get_version
       - uses: 1466587594/get-current-time@v2

@@ -24,9 +24,16 @@ if (flutterVersionName == null) {
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-def keystorePropertiesFile = rootProject.file("key.properties")
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    keystoreProperties.setProperty('storePassword', System.getenv('SIGN_KEY_STORE_PASSWORD'));
+    keystoreProperties.setProperty('keyPassword', System.getenv('SIGN_KEY_PASSWORD'));
+    keystoreProperties.setProperty('keyAlias', System.getenv('SIGN_KEY_ALIAS'));
+    keystoreProperties.setProperty('storeFile', System.getenv('SIGN_KEY_PATH'));
+}
 
 android {
     compileSdkVersion 31
