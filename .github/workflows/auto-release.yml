@@ -20,7 +20,7 @@ jobs:
           SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD }}
           SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
           SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
-          KEY_PATH: my-password-key.jks
+          SIGN_KEY_PATH: my-password-key.jks
       - uses: its404/get-flutter-version@v1.0.0
         id: get_version
       - uses: 1466587594/get-current-time@v2
