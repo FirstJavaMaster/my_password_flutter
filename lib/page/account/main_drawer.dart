@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/utils/import_export_utils.dart';
 import 'package:my_password_flutter/utils/version_check_utils.dart';
+import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -173,37 +174,54 @@ class MainDrawer extends StatelessWidget {
   }
 
   void _showAppInfoDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Center(child: Text('My Password')),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('本软件提供密码记录功能, 操作简单便捷. 主要有以下特性:'),
-              SizedBox(height: 10),
-              Text('  •  高级索引列表, 支持汉语拼音索引, 内容再多也能快速定位'),
-              Text('  •  支持账号关联, 记录各个网站的第三方登陆方式'),
-              Text('  •  自动记录历史密码, 快速找到以前的你'),
-              SizedBox(height: 10),
-              Text('隐私保护说明', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('用户数据始终保存在应用私有空间, 其他应用无法访问; 整个使用过程不会联网, 因此建议定时导出文件并分享至私人邮箱/QQ/微信/云存储等其他平台进行备份.', textScaleFactor: 0.8),
-              SizedBox(height: 10),
-              Text('开源地址'),
-              TextButton(
-                onPressed: () {
-                  String urlString = 'https://github.com/FirstJavaMaster/my_password_flutter';
-                  canLaunch(urlString).then((value) => value ? launch(urlString) : Fluttertoast.showToast(msg: '无法跳转'));
-                },
-                child: Text('https://github.com/FirstJavaMaster/my_password_flutter', textAlign: TextAlign.center),
+    PackageInfo.fromPlatform().then((packageInfo) {
+      // 获取当前版本
+      String localVersion = packageInfo.version;
+      // 获取时间
+      var now = DateTime.now();
+      String season = ['春', '夏', '秋', '冬'][now.month ~/ 3];
+
+      // 展示对话框
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Center(
+              child: Column(
+                children: [
+                  Text('My Password'),
+                  Text(localVersion),
+                ],
               ),
-              SizedBox(height: 10),
-              Text('2022 春  •  by Tong'),
-            ],
-          ),
-        );
-      },
-    );
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('本软件提供密码记录功能, 操作简单便捷. 主要有以下特性:'),
+                SizedBox(height: 10),
+                Text('  •  代码开源, 软件发布由GithubAction自动编译, 安全有保证'),
+                Text('  •  高级索引列表, 支持汉语拼音索引, 内容再多也能快速定位'),
+                Text('  •  支持账号间关联, 记录各个网站的第三方登陆方式'),
+                Text('  •  自动记录历史密码, 快速找到以前的你'),
+                SizedBox(height: 10),
+                Text('数据安全说明', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('用户数据始终保存在应用私有空间, 其他应用无法访问; 因此建议定期导出文件并分享至私人邮箱/QQ/微信/云存储等其他平台进行备份.', textScaleFactor: 0.8),
+                SizedBox(height: 10),
+                Text('开源地址'),
+                TextButton(
+                  onPressed: () {
+                    String urlString = 'https://github.com/FirstJavaMaster/my_password_flutter';
+                    canLaunch(urlString).then((value) => value ? launch(urlString) : Fluttertoast.showToast(msg: '无法跳转'));
+                  },
+                  child: Text('https://github.com/FirstJavaMaster/my_password_flutter', textAlign: TextAlign.center),
+                ),
+                SizedBox(height: 10),
+                Text('${now.year} $season  •  by Tong'),
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 }
