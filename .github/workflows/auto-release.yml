@@ -11,7 +11,7 @@ jobs:
       - run: echo $SIGN_KEY_CONTENT | base64 -di > android/app/my-password-key.jks
         env:
           SIGN_KEY_CONTENT: ${{ secrets.SIGN_KEY_CONTENT }}
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
       - run: flutter pub get
