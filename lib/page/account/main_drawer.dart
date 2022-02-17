@@ -199,7 +199,7 @@ class MainDrawer extends StatelessWidget {
                 child: Text('https://github.com/FirstJavaMaster/my_password_flutter', textAlign: TextAlign.center),
               ),
               SizedBox(height: 10),
-              Text('2021 冬  •  by Tong'),
+              Text('2022 春  •  by Tong'),
             ],
           ),
         );
