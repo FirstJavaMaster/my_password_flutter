@@ -179,7 +179,7 @@ class MainDrawer extends StatelessWidget {
       String localVersion = packageInfo.version;
       // 获取时间
       var now = DateTime.now();
-      String season = ['春', '夏', '秋', '冬'][now.month ~/ 3];
+      String season = [' ', '冬', '冬', '春', '春', '春', '夏', '夏', '夏', '秋', '秋', '秋', '冬'][now.month];
 
       // 展示对话框
       showDialog(
