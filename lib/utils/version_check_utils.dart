@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/bo/github_release_response.dart';
 import 'package:my_password_flutter/bo/version_comparer.dart';
@@ -17,19 +16,17 @@ class VersionCheckUtils {
   // 常规版: 整个检查流程都有提示
   static Future<void> check(BuildContext context) async {
     // 展示等待对话框
-    SmartDialog.showLoading(msg: '检查中...');
+    Fluttertoast.showToast(msg: "检查中...");
     // 对比版本
     try {
       GithubReleaseResponse? githubReleaseResponse = await _findNewVersion();
       if (githubReleaseResponse == null) {
-        SmartDialog.showToast('已经是最新版本');
+        Fluttertoast.showToast(msg: '已经是最新版本');
       } else {
         _showNewVersion(context, githubReleaseResponse);
       }
     } catch (error) {
-      SmartDialog.showToast('检查失败 ${error.toString()}');
-    } finally {
-      SmartDialog.dismiss(status: SmartStatus.loading);
+      Fluttertoast.showToast(msg: '检查失败 ${error.toString()}');
     }
   }
 
