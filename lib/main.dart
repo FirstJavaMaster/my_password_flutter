@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     // 检查新版本
     Future.delayed(Duration(seconds: 10), () => VersionCheckUtils.checkQuiet(context));
     return new MaterialApp(
-      title: 'Startup Name Generator',
+      title: 'my_password',
       home: new AccountListPage(),
     );
   }
