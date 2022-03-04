@@ -1,1 +1,1 @@
-flutter build apk
+flutter build apk --target-platform=android-arm64
