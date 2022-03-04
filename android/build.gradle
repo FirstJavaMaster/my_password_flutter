@@ -2,9 +2,10 @@ buildscript {
     ext.kotlin_version = '1.6.10'
 
     repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
         mavenLocal()
         mavenCentral()
-        maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
     }
 
     dependencies {
@@ -15,9 +16,10 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
         mavenLocal()
         mavenCentral()
-        maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
     }
 }
 
