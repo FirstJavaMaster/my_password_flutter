@@ -175,8 +175,6 @@ class MainDrawer extends StatelessWidget {
 
   void _showAppInfoDialog(BuildContext context) {
     PackageInfo.fromPlatform().then((packageInfo) {
-      // 获取当前版本
-      String localVersion = packageInfo.version;
       // 获取时间
       var now = DateTime.now();
       String season = [' ', '冬', '冬', '春', '春', '春', '夏', '夏', '夏', '秋', '秋', '秋', '冬'][now.month];
@@ -189,8 +187,8 @@ class MainDrawer extends StatelessWidget {
             title: Center(
               child: Column(
                 children: [
-                  Text('My Password'),
-                  Text(localVersion),
+                  Text(packageInfo.appName),
+                  Text(packageInfo.version),
                 ],
               ),
             ),
