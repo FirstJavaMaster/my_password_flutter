@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_password_flutter/utils/import_export_utils.dart';
-import 'package:my_password_flutter/utils/version_check_utils.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -73,11 +72,6 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.file_upload),
             title: Text('导出数据'),
             onTap: () => exportFile(mainContext),
-          ),
-          ListTile(
-            leading: Icon(Icons.sync),
-            title: Text('检查更新'),
-            onTap: () => VersionCheckUtils.check(mainContext),
           ),
           ListTile(
             leading: Icon(Icons.help_outline),
@@ -188,7 +182,10 @@ class MainDrawer extends StatelessWidget {
               child: Column(
                 children: [
                   Text(packageInfo.appName),
-                  Text(packageInfo.version),
+                  Text(
+                    packageInfo.version,
+                    style: TextStyle(fontSize: 14),
+                  ),
                 ],
               ),
             ),
@@ -197,15 +194,16 @@ class MainDrawer extends StatelessWidget {
               children: [
                 Text('本软件提供密码记录功能, 操作简单便捷. 主要有以下特性:'),
                 SizedBox(height: 10),
-                Text('  •  代码开源, 软件发布由GithubAction自动编译, 安全有保证'),
+                Text('  •  代码开源, 软件发布由GithubAction自动编译'),
+                Text('  •  软件不需要网络权限, 所有的数据都在你的掌控之下'),
                 Text('  •  高级索引列表, 支持汉语拼音索引, 内容再多也能快速定位'),
                 Text('  •  支持账号间关联, 记录各个网站的第三方登陆方式'),
-                Text('  •  自动记录历史密码, 快速找到以前的你'),
+                Text('  •  提供历史密码记录功能, 快速找到以前的你'),
                 SizedBox(height: 10),
                 Text('数据安全说明', style: TextStyle(fontWeight: FontWeight.bold)),
                 Text('用户数据始终保存在应用私有空间, 其他应用无法访问; 因此建议定期导出文件并分享至私人邮箱/QQ/微信/云存储等其他平台进行备份.', textScaleFactor: 0.8),
                 SizedBox(height: 10),
-                Text('开源地址'),
+                Text('开源/更新地址'),
                 TextButton(
                   onPressed: () {
                     String urlString = 'https://github.com/FirstJavaMaster/my_password_flutter';
