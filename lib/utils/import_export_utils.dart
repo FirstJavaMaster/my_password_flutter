@@ -51,7 +51,6 @@ class ImportExportUtils {
     try {
       return await _doExportData();
     } catch (e) {
-      print(e);
       Fluttertoast.showToast(msg: '导出失败', gravity: ToastGravity.CENTER);
       return '';
     }
